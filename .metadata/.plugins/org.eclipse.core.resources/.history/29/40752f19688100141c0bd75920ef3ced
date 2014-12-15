@@ -1,0 +1,10 @@
+package methodpractice;
+
+public class BoxCars {
+	
+	private PairOfDice pair = new PairOfDice();
+	public static void main(String[] args) {
+		
+	}
+	
+}

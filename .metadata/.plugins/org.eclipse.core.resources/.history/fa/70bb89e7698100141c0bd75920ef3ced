@@ -1,0 +1,34 @@
+package methodpractice;
+import java.util.*;
+import villa7.Print;
+public class Pig {
+	
+	public static Print p = new Print();
+	public static Scanner s = new Scanner(System.in);
+	public static PairOfDice pair = new PairOfDice();
+	public static boolean playerTurn = true,
+						  computerTurn = false;
+	public static int playerScore = 0,
+					  computerScore = 0;
+	
+	public static void main(String args) {
+		p.nl("HAI");
+		
+		while(true) {
+			do {
+				p.nl("HELLO PLAYER");
+				p.nl("ROLL? y/n");
+				if (s.next().equalsIgnoreCase("Y")) {
+					if (pair.roll(1) == 1) {
+						if (pair.roll(2) == 1) {
+							p.nl("LOSE ALL POINTS / END TURN");
+						} else {
+							p.nl("END TURN");
+						}
+					}
+				}
+			} while (playerTurn);
+		}
+	}
+	
+}

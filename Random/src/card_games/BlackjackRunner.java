@@ -14,8 +14,6 @@ public class BlackjackRunner {
 	
 	private static double ver = 1.0;
 	
-	private static int suit;
-	private static int value;
 	private static int computerCard, userCard;
 	private static Print p = new Print();
 	private static Hand hand = new Hand();

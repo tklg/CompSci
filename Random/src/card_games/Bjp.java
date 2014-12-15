@@ -1,3 +1,10 @@
+/*
+ * Bjp.java
+ * http://villa7.github.io
+ *
+ * Copyright (C) 2014-2014 Theodore Kluge
+ */
+
 package card_games;
 import villa7.Print;
 
@@ -45,17 +52,16 @@ public class Bjp {
 	public void setFirstTurn(boolean isFirstTurn) {
 		this.isFirstTurn = isFirstTurn;
 	}
-	public boolean isWinner() {
-		return isWinner;
-	}
-	public void setWinner(boolean isWinner) {
-		this.isWinner = isWinner;
-	}
 	public boolean isAI() {
 		return isAI;
 	}
 	public void setAI(boolean isAI) {
 		this.isAI = isAI;
 	}
-
+	public void isWinner(boolean isWinner) {
+		this.isWinner = isWinner;
+	}
+	public boolean isWinner() {
+		return isWinner;
+	}
 }

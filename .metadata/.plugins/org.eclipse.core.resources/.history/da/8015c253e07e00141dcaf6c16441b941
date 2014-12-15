@@ -1,0 +1,22 @@
+package card_games;
+import villa7.Print;
+import java.util.*;
+
+public class Bjp {
+	private static int total = 0;
+	private static boolean isWinner = false,
+					isFirstTurn = false;
+	
+	public Bjp() {
+		
+	}
+	
+	public String getAction() {
+		return "A";
+	}
+	public int getTotal() {
+		return 1;
+	}
+	
+
+}

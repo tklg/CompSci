@@ -1,0 +1,13 @@
+package methodpractice;
+import java.util.*;
+import villa7.Print;
+public class Pig {
+	
+	public static Print p = new Print();
+	public static Scanner s = new Scanner(System.in);
+	
+	public static void main(String args) {
+		p.nl("HAI");
+	}
+	
+}

@@ -1,0 +1,16 @@
+package methodpractice;
+
+public class Pig {
+
+	public static void main(String args) {
+		
+	}
+	
+	private class Player {
+		public boolean isComputer = false;
+		public Player() {
+			
+		}
+	}
+	
+}

@@ -15,34 +15,34 @@ public class BlackjackRunner2 {
 	private static double ver = 1.1;
 	
 	private static Bjp player[];
-	private static Bjd dealer = new Bjd("Dealer");
+	private static Bjd dealer;
 
-	private static int suit;
-	private static int value;
+	private static final int MIN_PLAYERS = 1, MAX_PLAYERS = 6;
 	private static int computerCard, userCard, aiCard;
 	private static int numPlayers = 0;
 	private static Print p = new Print();
 	private static Hand hand = new Hand();
 	private static Scanner s = new Scanner(System.in);
-	private static String[] players;
+	//private static String[] players;
+	private static ArrayList<String> pWin = new ArrayList<String>();
 	private static ArrayList<String> winners = new ArrayList<String>();
 
-	private static boolean playerTurn = true, aiTurn = true, computerTurn = true;
+	private static boolean playerTurn = true, computerTurn = true;
 	private static boolean running = true;
-	private static boolean[] isFirstTurn, isAIFT;
+	/*private static boolean[] isFirstTurn, isAIFT;*/
 	
-	private static int userTotal[],
+	/*private static int userTotal[],
 					   aiTotal[],
-					   computerTotal;
+					   computerTotal;*/
 	
 	public static void main(String[] args) {
 		
 		p.nl("BlackjackGame v" + ver);
 		p.nl();
 		do {
-			p.nl("Number of players (1 - 6):");
+			p.nl("Number of players ("+MIN_PLAYERS+" - "+MAX_PLAYERS+"):");
 			numPlayers = s.nextInt();
-		} while (numPlayers <= 0 || numPlayers > 6);
+		} while (numPlayers < MIN_PLAYERS || numPlayers > MAX_PLAYERS);
 
 		//players = new String[numPlayers];
 		player = new Bjp[numPlayers];
@@ -53,8 +53,8 @@ public class BlackjackRunner2 {
 			//p.nl(i);
 			if (n.equalsIgnoreCase("AI") || n.equalsIgnoreCase("BOT")) {
 				for (int c = i; c < player.length; c++) {
-					p.nl("Creating AI: " + c);
-					player[c] = new Bjp("AI" + n, true);
+					p.nl("Creating AI: 'AI:" + (c + 1) + "'");
+					player[c] = new Bjp("AI:" + (c + 1), true);
 				}
 				i = player.length;
 			} else {
@@ -65,10 +65,30 @@ public class BlackjackRunner2 {
 		while (running) {
 			hand.newDeck(52);
 			hand.newUsedDeck(52);
+			dealer = new Bjd("Dealer");
 			
 			if (playBlackjack()) {
-				int numWinners = 0;
-				p.nl("Winners:");
+				int tmp = 0;
+				for (int i = 0; i < player.length; i++) {
+					if (player[i].isWinner()) {
+						if (player[i].getTotal() >= tmp) {
+							if (player[i].getTotal() == tmp) {
+								winners.add(player[i].getName());
+								tmp = player[i].getTotal();
+							} else {
+								winners.clear();
+								winners.add(player[i].getName());
+								tmp = player[i].getTotal();
+							}
+						}
+					}
+				}
+				p.nl();
+				if (winners.size() > 1)
+					p.nl("Overall winners:");
+				else
+					p.nl("Overall winner:");
+				
 				for (String s : winners) {
 					p.nl(s);
 				}
@@ -77,19 +97,13 @@ public class BlackjackRunner2 {
 				p.nl("Dealer wins.");
 			}
 			p.nbsp(3);
-			break;
+			break; //remove when reset all values for new game
 		}
 	}
 	
 	private static boolean playBlackjack() {
-		//userTotal = new int[numPlayers - numAI];
-		//aiTotal = new int[numAI];
-		//computerTotal = 0;
-		//computerTurn = true;
-		//isFirstTurn = new boolean[numPlayers];
-		//isAIFT = new boolean[numPlayers];
 		for (int i = 0; i < numPlayers; i++) {
-			p.nl("Set playerFirstTurn of player " + i + " to true.");
+			//p.nl("Set playerFirstTurn of player " + (i+1) + " (" + player[i].getName() + ") to true.");
 			player[i].setFirstTurn(true);
 		}
 		
@@ -100,12 +114,13 @@ public class BlackjackRunner2 {
 		}
 
 		dealer.addTotal(hand.drawRandomCard());
-		p.nl("The dealer has a " + computerTotal + " and an unknown card.");
+		p.nl("The dealer has a " + dealer.getTotal() + " and an unknown card.");
 		dealer.addTotal(hand.drawRandomCard());
 		
 		while(true) {
 			
 			for (int i = 0; i < numPlayers; i++) {
+				p.nbsp(1);
 				p.nl("Player " + (i + 1) + " (" + player[i].getName() + "'s) turn:");
 				playerTurn = true;
 				while (playerTurn) {
@@ -132,7 +147,7 @@ public class BlackjackRunner2 {
 							player[i].addTotal(userCard);
 							p.nl("Your total is " + player[i].getTotal());
 							if (player[i].getTotal() > 21) {
-								p.nl("Player " + (i + 1) +  " loses.");
+								p.nl("You lose.");
 								playerTurn = false;
 							}
 						} else if (userAction.equalsIgnoreCase("stand")) {
@@ -153,7 +168,7 @@ public class BlackjackRunner2 {
 							p.nl("AI #" + (i+1) + " drew " + aiCard);
 							player[i].addTotal(aiCard);
 							p.nl("AI #" + (i+1) + " has a total of " + player[i].getTotal());
-							if (aiTotal[i] > 21) {
+							if (player[i].getTotal() > 21) {
 								p.nl("AI #" + (i+1) + " loses.");
 								playerTurn = false;
 							}
@@ -166,59 +181,76 @@ public class BlackjackRunner2 {
 				}
 			}
 			
-			//Dumb AI
 			while (computerTurn) {
+				p.nbsp(1);
 				if (dealer.getTotal() == 21) { //if dealer has 21, he wins
-					for (int i = 0; i < numPlayers; i++) {
+					for (int i = 0; i < player.length; i++) {
 						if (player[i].getTotal() == 21) { //unless player also has 21
-							p.nl("checking total of p" + (i+1));
-							winners.add(player[i].getName());
+							addWinner(i);
 						}
 					}
-					if (winners.size() > 0) { //if there is at least one winner
+					if (pWin.size() > 0) { //if there is at least one winner
 						computerTurn = false;
-						p.nl("There are " + winners.size() + " winners.");
+						p.nl("There are " + pWin.size() + " potential winners.");
 						return true;
 					} else {
 						return false;
 					}
-				} else if (dealer.getTotal() < 17) {
+				} else if (dealer.getTotal() < 17) { //if dealer has <17, he draws more
 					computerCard = hand.drawRandomCard();
 					p.nl("Dealer drew " + computerCard);
 					dealer.addTotal(computerCard);
-					p.nl("Dealer has " + computerTotal);
+					p.nl("Dealer has " + dealer.getTotal());
 				} else {
-					p.nl("Dealer stands.");
-					for (int i = 0; i < numPlayers; i++) {
-						if (player[i].getTotal() > dealer.getTotal()) {
-							p.nl("checking total of p" + (i+1));
-							winners.add(player[i].getName());
-						}
-					}
-					if (winners.size() > 0) {
+					if (dealer.getTotal() > 21) {
+						p.nl("Dealer loses.");
 						computerTurn = false;
-						p.nl("There are " + winners.size() + " winners.");
+						for (int i = 0; i < player.length; i++) {
+							if (player[i].getTotal() < 22) {
+								addWinner(i);
+							}
+						}
+						if (pWin.size() > 0) {
+							p.nl("There are " + pWin.size() + " potential winners.");
+						}
 						return true;
 					} else {
-						return false;
+						p.nl("Dealer stands."); //if dealer has >17 he stands
+						computerTurn = false;
+						for (int i = 0; i < player.length; i++) {
+							if (player[i].getTotal() > dealer.getTotal() && player[i].getTotal() < 22) {
+								addWinner(i);
+							}
+						}
+						if (pWin.size() > 0) {
+							p.nl("There are " + pWin.size() + " potential winners.");
+							return true;
+						} else {
+							return false;
+						}
 					}
 				}
 			}
 			
 			//win logic
-			if (dealer.getTotal() > 21) {
-				for (int i = 0; i < numPlayers; i++) {
-					winners.add(player[i].getName());
+			if (dealer.getTotal() > 21) { //if dealer has >21 he loses
+				p.nl("Dealer loses");
+				for (int i = 0; i < player.length; i++) {
+					if (player[i].getTotal() < 22)
+						addWinner(i);
 				}
-				if (winners.size() > 0) {
-					p.nl("There are " + winners.size() + " winners.");
-					return true;
-				} else {
-					return false;
+				if (pWin.size() > 0) {
+					p.nl("There are " + pWin.size() + " potential winners.");
 				}
+				return true;
 			} else {
 				return false;
 			}
 		}
+	}
+	private static void addWinner(int i) {
+		p.nl("Checking total of p" + (i+1) + " (" + player[i].getName() + "): " + player[i].getTotal());
+		pWin.add(player[i].getName());
+		player[i].isWinner(true);
 	}
 }
