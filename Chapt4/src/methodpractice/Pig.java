@@ -10,11 +10,12 @@ public class Pig {
 						  computerTurn = false;
 	public static int playerScore = 0,
 					  computerScore = 0,
-					  roundTotal = 0;
+					  roundTotal = 0,
+					  roundCur = 0;
 	public static final int GOAL = 100;
 	
 	public static void main(String[] args) {
-		p.nl("GAME OF PIG");
+		p.nl("-=< GAME OF PIG >=-");
 		if (playPig()) {
 			p.nl();
 			p.nl("Player wins!");
@@ -28,11 +29,12 @@ public class Pig {
 		while(true) {
 			playerTurn = true;
 			computerTurn = true;
+			roundTotal = 0;
+			roundCur = 0;
 			
 			do {
-				roundTotal = 0;
 				p.nl("Player's turn.");
-				p.nl("Player has " + playerScore + " points.");
+				p.nl("Player has " + playerScore + " points. (" + roundCur + " points current round)");
 				p.nl("ROLL? y/n");
 				if (s.next().equalsIgnoreCase("Y")) {
 					int r1 = pair.roll(1);
@@ -41,18 +43,23 @@ public class Pig {
 					roundTotal += (r1 + r2);
 					if (r1 == 1 && r2 == 1) {
 						roundTotal = 0;
+						roundCur = 0;
 						playerScore = 0;
 						playerTurn = false;
-						p.nl("LOSE ALL POINTS & END TURN");
+						p.nl("You rolled 2 1s.");
+						p.nl("You lose all points.");
 					} else if (r1 == 1 || r2 == 1) {
 						roundTotal = 0;
+						roundCur = 0;
 						playerTurn = false;
-						p.nl("LOSE TURN POINTS");
+						p.nl("You rolled a " + r1 + " and a " + r2);
+						p.nl("You lose this turn's points.");
 					} else {
-						playerScore += roundTotal;
+						roundCur += roundTotal;
 						p.nl("GAINED " + roundTotal + " points.");
 					}
 				} else {
+					playerScore += roundCur;
 					playerTurn = false;
 				}
 			} while (playerTurn);
@@ -62,13 +69,14 @@ public class Pig {
 			} else if (computerScore > GOAL) {
 				return false;
 			} else {
-				p.nl("moar");
+				p.nl();
 			}
 			
+			roundTotal = 0;
+			roundCur = 0;
 			do {
-				roundTotal = 0;
 				p.nl("Computer's turn.");
-				p.nl("Computer has " + computerScore + " points.");
+				p.nl("Computer has " + computerScore + " points.  (" + roundCur + " points current round)");
 				
 				if (roundTotal < 20) { //roll
 					p.nl("Computer rolls.");
@@ -78,18 +86,23 @@ public class Pig {
 					roundTotal += (r1 + r2);
 					if (r1 == 1 && r2 == 1) {
 						roundTotal = 0;
+						roundCur = 0;
 						computerScore = 0;
 						computerTurn = false;
-						p.nl("COMPUTER LOSE ALL POINTS & END TURN");
+						p.nl("Computer rolled 2 1s.");
+						p.nl("Computer loses all points.");
 					} else if (r1 == 1 || r2 == 1) {
 						roundTotal = 0;
+						roundCur = 0;
 						computerTurn = false;
-						p.nl("COMPUTER LOSE TURN POINTS");
+						p.nl("Computer rolled a " + r1 + " and a " + r2);
+						p.nl("Computer loses this turn's points.");
 					} else {
-						computerScore += roundTotal;
-						p.nl("COMPUTER GAINED " + roundTotal + " points.");
+						roundCur += roundTotal;
+						p.nl("Computer gains " + roundTotal + " points.");
 					}
 				} else {
+					computerScore += roundCur;
 					computerTurn = false;
 				}
 			} while (computerTurn);
@@ -99,7 +112,7 @@ public class Pig {
 			} else if (computerScore > GOAL) {
 				return false;
 			} else {
-				p.nl("moar");
+				p.nl();
 			}
 		}
 	}	

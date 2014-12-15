@@ -37,7 +37,7 @@ public class BlackjackRunner2 {
 	
 	public static void main(String[] args) {
 		
-		p.nl("BlackjackGame v" + ver);
+		p.ne("-=< BlackjackGame v" + ver + " >=-");
 		p.nl();
 		do {
 			p.nl("Number of players ("+MIN_PLAYERS+" - "+MAX_PLAYERS+"):");
