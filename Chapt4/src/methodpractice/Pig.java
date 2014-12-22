@@ -15,7 +15,8 @@ public class Pig {
 	public static final int GOAL = 100;
 	
 	public static void main(String[] args) {
-		p.nl("-=< GAME OF PIG >=-");
+		p.ne("-=< GAME OF PIG >=-");
+		p.nl();
 		if (playPig()) {
 			p.nl();
 			p.nl("Player wins!");

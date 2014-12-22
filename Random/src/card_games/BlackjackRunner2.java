@@ -12,12 +12,13 @@ import villa7.Print;
 
 public class BlackjackRunner2 {
 	
-	private static double ver = 1.1;
+	private static double ver = 1.2;
 	
 	private static Bjp player[];
 	private static Bjd dealer;
 
-	private static final int MIN_PLAYERS = 1, MAX_PLAYERS = 6;
+	private static final int MIN_PLAYERS = 1;
+	private static int MAX_PLAYERS = 6;
 	private static int computerCard, userCard, aiCard;
 	private static int numPlayers = 0;
 	private static Print p = new Print();
@@ -41,7 +42,14 @@ public class BlackjackRunner2 {
 		p.nl();
 		do {
 			p.nl("Number of players ("+MIN_PLAYERS+" - "+MAX_PLAYERS+"):");
-			numPlayers = s.nextInt();
+			String tmp = s.next();
+			if (tmp.equalsIgnoreCase("newmax")) {
+				p.ne("Enter new max number of players: ");
+				MAX_PLAYERS = s.nextInt();
+				p.nl();
+			} else {
+				numPlayers = Integer.parseInt(tmp);
+			}
 		} while (numPlayers < MIN_PLAYERS || numPlayers > MAX_PLAYERS);
 
 		//players = new String[numPlayers];
@@ -83,7 +91,7 @@ public class BlackjackRunner2 {
 						}
 					}
 				}
-				p.nl();
+				p.nbsp(3);p.nl("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");p.nbsp(3);
 				if (winners.size() > 1)
 					p.nl("Overall winners:");
 				else
@@ -96,7 +104,7 @@ public class BlackjackRunner2 {
 			} else {
 				p.nl("Dealer wins.");
 			}
-			p.nbsp(3);
+			p.nbsp(6);
 			break; //remove when reset all values for new game
 		}
 	}
@@ -118,9 +126,10 @@ public class BlackjackRunner2 {
 		dealer.addTotal(hand.drawRandomCard());
 		
 		while(true) {
-			
 			for (int i = 0; i < numPlayers; i++) {
-				p.nbsp(1);
+				p.nbsp(3);
+				p.nl("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+				p.nbsp(3);
 				p.nl("Player " + (i + 1) + " (" + player[i].getName() + "'s) turn:");
 				playerTurn = true;
 				while (playerTurn) {
