@@ -1,9 +1,0 @@
-package card_games;
-
-public class Bjd extends Bjp {
-
-	public Bjd(String name) {
-
-	}
-
-}

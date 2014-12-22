@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename field &apos;winners&apos; in &apos;card_games.BlackjackRunner2&apos; to &apos;pWin&apos;&#x0D;&#x0A;- Original project: &apos;Random&apos;&#x0D;&#x0A;- Original element: &apos;card_games.BlackjackRunner2.winners&apos;&#x0D;&#x0A;- Renamed element: &apos;card_games.BlackjackRunner2.pWin&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" delegate="false" deprecate="false" description="Rename field &apos;winners&apos;" flags="589826" getter="false" id="org.eclipse.jdt.ui.rename.field" input="/src&lt;card_games{BlackjackRunner2.java[BlackjackRunner2^winners" name="pWin" references="true" setter="false" stamp="1418649436307" textual="false" version="1.0"/>
-</session>

@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename type &apos;labs_ch3.IntExperiment&apos; to &apos;IntWrapper&apos;&#x0D;&#x0A;- Original project: &apos;Labs&apos;&#x0D;&#x0A;- Original element: &apos;labs_ch3.IntExperiment&apos;&#x0D;&#x0A;- Renamed element: &apos;labs_ch3.IntWrapper&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;IntExperiment&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;labs_ch3{IntExperiment.java[IntExperiment" matchStrategy="1" name="IntWrapper" qualified="false" references="true" similarDeclarations="false" stamp="1416249855318" textual="false" version="1.0"/>
-</session>

@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Convert local variable &apos;labs_ch5.Salary.main().sc&apos; in &apos;labs_ch5.Salary.main()&apos; to field&#x0D;&#x0A;- Original project: &apos;Labs&apos;&#x0D;&#x0A;- Original element: &apos;labs_ch5.Salary.main().sc&apos;&#x0D;&#x0A;- Field name: &apos;sc&apos;&#x0D;&#x0A;- Initialize field in method&#x0D;&#x0A;- Declared visibility: &apos;private&apos;&#x0D;&#x0A;- Declare field &apos;static&apos;" description="Convert local variable &apos;sc&apos; to field" final="false" flags="2" id="org.eclipse.jdt.ui.promote.temp" initialize="1" input="/src&lt;labs_ch5{Salary.java" name="sc" selection="295 27" stamp="1414521289950" static="true" version="1.0" visibility="2"/>
-</session>
