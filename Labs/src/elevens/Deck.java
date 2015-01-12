@@ -93,26 +93,27 @@ public class Deck {
 	 */
 	@Override
 	public String toString() {
+		p.nl("Tostring");
 		String rtn = "size = " + size + "\nUndealt cards: \n";
 
-		for (int k = size; k >= 0; k--) {
-			rtn = rtn + deck.get(k);
-			if (k != 0) {
+		for (int i = size - 1; i >= 0; i--) {
+			rtn = rtn + deck.get(i);
+			if (i != 0) {
 				rtn = rtn + ", ";
 			}
-			if ((size - k) % 2 == 0) {
+			if ((size - i) % 2 == 0) {
 				// Insert carriage returns so entire deck is visible on console.
 				rtn = rtn + "\n";
 			}
 		}
 
 		rtn = rtn + "\nDealt cards: \n";
-		for (int k = deck.size(); k >= size; k--) {
-			rtn = rtn + deck.get(k);
-			if (k != size) {
+		for (int i = deck.size() - 1; i >= size; i--) {
+			rtn = rtn + deck.get(i);
+			if (i != size) {
 				rtn = rtn + ", ";
 			}
-			if ((k - deck.size()) % 2 == 0) {
+			if ((i - deck.size()) % 2 == 0) {
 				// Insert carriage returns so entire deck is visible on console.
 				rtn = rtn + "\n";
 			}
