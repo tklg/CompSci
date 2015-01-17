@@ -20,6 +20,5 @@ public class SHA2 {
 	        return generatedPassword;
 	    } catch (NoSuchAlgorithmException e) { e.printStackTrace(); }       
 	    return null;
-	}
-	
+	}	
 }
