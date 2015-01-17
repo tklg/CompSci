@@ -61,6 +61,7 @@ public class Main {
 						 .replace(" ", "");
 				if (removeUser(remName, remPass)) {
 					p.nl("Removed user: " + remName);
+					userList = db.readFile(); //refresh user list
 				} else {
 					p.ne("Failed to remove user: " + remName);
 				}

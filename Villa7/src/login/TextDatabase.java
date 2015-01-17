@@ -118,7 +118,7 @@ public class TextDatabase {
 	                } catch (Exception e) {
 	                    p.ne("Could not delete file: " + e);
 	                }
-	                /*ename the new file to the filename the original file had.*/
+	                /*rename the new file to the filename the original file had.*/
 	                try {
 	                    tempFile.renameTo(dataFile);
 	                } catch (Exception e) {
