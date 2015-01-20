@@ -22,6 +22,7 @@ public class SHA2 {
 	    	e.printStackTrace(); 
 	    }       
 	    return null;
+<<<<<<< HEAD
 	}
 	public static String hash(String p, String s) {
 	    try {
@@ -43,4 +44,7 @@ public class SHA2 {
 	}
 	
 	
+=======
+	}	
+>>>>>>> 49f3477a08a3a98a5e4f1da7ada18faeaf917fb9
 }

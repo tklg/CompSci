@@ -2,65 +2,54 @@ package villa7;
 
 public class Print {
 
-	public static void main(String[] args) {}
+	public void l(String a) {
+		System.out.print(a);
+	}
+	public void nl(String a) {
+		System.out.println(a);
+	}
+	public void l(int a) {
+		System.out.print(a);
+	}
+	public void nl(int a) {
+		System.out.println(a);
+	}
+	public void l(boolean a) {
+		System.out.print(a);
+	}
+	public void nl(boolean a) {
+		System.out.println(a);
+	}
+	public void l(double a) {
+		System.out.print(a);
+	}
+	public void nl(double a) {
+		System.out.println(a);
+	}
+	//for errors
+	public void e(String a) {
+		System.out.print(a);
+	}
+	public void ne(String a) {
+		System.out.println(a);
+	}
+	public void e(int a) {
+		System.out.print(a);
+	}
+	public void ne(int a) {
+		System.out.println(a);
+	}
+	public void e(boolean a) {
+		System.out.print(a);
+	}
+	public void ne(boolean a) {
+		System.out.println(a);
+	}
+	public void e(double a) {
+		System.out.print(a);
+	}
+	public void ne(double a) {
+		System.out.println(a);
+	}
 	
-	public void l(String args) {
-		System.out.print(args);
-	}
-	public void l(int args) {
-		System.out.print(args);
-	}
-	public void l(double args) {
-		System.out.print(args);
-	}
-	public void l(boolean args) {
-		System.out.print(args);
-	}
-	//--------------------------
-	public void nl(String args) {
-		System.out.println(args);
-	}
-	public void nl(int args) {
-		System.out.println(args);
-	}
-	public void nl(double args) {
-		System.out.println(args);
-	}
-	public void nl(boolean args) {
-		System.out.println(args);
-	}
-	public void nl() {
-		nl("");
-	}
-	//--------------------------
-	public void e(String args) {
-		System.err.print(args);
-	}
-	public void e(int args) {
-		System.err.print(args);
-	}
-	public void e(double args) {
-		System.err.print(args);
-	}
-	public void e(boolean args) {
-		System.err.print(args);
-	}
-	//--------------------------
-	public void ne(String args) {
-		System.err.println(args);
-	}
-	public void ne(int args) {
-		System.err.println(args);
-	}
-	public void ne(double args) {
-		System.err.println(args);
-	}
-	public void ne(boolean args) {
-		System.err.println(args);
-	}
-	public void nbsp(int l) {
-		for(int i = 0; i < l; i++) {
-			nl("");
-		}
-	}
 }
