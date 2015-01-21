@@ -17,7 +17,9 @@ import java.util.ArrayList;
 
 import functions.*;
 
-public class TextDatabase {
+public class QueryDatabase {
+	//TODO: write a single function that receives a query string formatted for SQL or something
+	//Alternatively just use an actual SQL file maybe
 	
 	BufferedReader input;
     Writer output;
@@ -25,13 +27,16 @@ public class TextDatabase {
     File dir, dataFile, tempFile;
     static String divider = " ||| ";
     
-	public TextDatabase(String dirName, String fileName, String tempFileName) {
+	public QueryDatabase(String dirName, String fileName, String tempFileName) {
 		dir = new File (this.getClass().getClassLoader().getResource("").getPath() + dirName);
 		createDir(dir);
 		dataFile = new File(dir, fileName);
 	    tempFile = new File(dir, tempFileName);
 	    createFile(dataFile);
 	    createFile(tempFile);
+	}
+	public void query(String query) {
+		String q[] = query.split(" ");
 	}
 	private int createDir(File dir) {
 		if (!dir.exists()) {
@@ -187,9 +192,6 @@ public class TextDatabase {
     		p.ne("RemoveLineFromFile failed: file does not exist and may have been created");
     	}
     	return false;
-    }
-    public void removeLineFromFileContaining(String line) {
-    	
     }
     public void writeFile(String lineToWrite, boolean newLine, boolean div) {
     	if (checkFile(dataFile, true) == 0) {
