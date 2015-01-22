@@ -3,12 +3,12 @@ package login;
 import functions.*;
 import java.util.*;
 
-public class Access {
+public class UserAccess {
 	private static Print p = new Print();
 	private static Scanner sc = new Scanner(System.in);
 	private static ArrayList<String> userList, validUsers = new ArrayList<String>(), validPass = new ArrayList<String>();
 	private static String dirName = "/userdata/",
-				   fileName = "dataFile.txt",
+				   fileName = "dataFile2.txt",
 				   tempFile = "tempFile.txt";
 	private static TextDatabase db;
 	private static boolean running = true,
@@ -16,8 +16,11 @@ public class Access {
 	private static final String PASS_SALT = "SODIUMCHLORIDE";
 	private static String commands = "[add | remove | login | logout | users | exit]";
 	private static String userName = null;
+	private static String div = TextDatabase.divider;
+	private static User usr[];
+	private static ArrayList<User> users = new ArrayList<User>(); //possibly redundant arraylist
 	
-	public Access() {
+	public UserAccess() {
 		//replace with the content of the main method to use this as a class to handle login/logout/add/rem from another class
 		p.nl("Hello world!");
 	}
@@ -26,6 +29,17 @@ public class Access {
 		db = new TextDatabase(dirName, fileName, tempFile);
 		
 		userList = db.readFile();
+		int c = 0;
+		for (String l : userList) {
+			String tmp[];
+			for (int i = 0; i < l.split(div).length; i++) {
+				tmp[i] = l.split(div)[i].trim();
+			}
+			usr[c] = new User(tmp[0], tmp[1], tmp[2]);
+			users.add(usr[c]);
+			c++;
+		}
+		refreshUserAndPass();
 		
 		while(running) {
 			if (logged) {
@@ -124,10 +138,10 @@ public class Access {
 	private static void setAccessLevel(String user, String pass) {
 		
 	}
-	private static boolean removeUser(String user, String pass, int lvl) {
+	private static boolean removeUser(User user) {
 		if (checkUser(user)) {
-			if (checkPass(user, pass)) {
-				return db.removeLineFromFile(user + " ||| " + SHA2.hash(sanit(pass), PASS_SALT) + " ||| " + 0);
+			if (checkPass(user, user.getPass())) {
+				return db.removeLineFromFile(user.toString());
 			} else {
 				p.ne("Incorrect password.");
 				return false;
@@ -137,14 +151,19 @@ public class Access {
 			return false;
 		}
 	}
-	private static boolean checkUser(String user) {
-		validUsers.clear();
-		for (int i = 1; i < userList.size(); i++) {
-			validUsers.add(userList.get(i).split("\\|\\|\\|")[0].trim());
-		}
+	private static boolean checkUser(User user) {
+		refreshUserAndPass();
 		return validUsers.contains(sanit(user));
 	}
-	private static boolean checkPass(String user, String pass) {
+	private static boolean checkPass(User user, String pass) {
+		refreshUserAndPass();
+		if (validPass.contains(SHA2.hash(sanit(pass), PASS_SALT))) {
+			return validUsers.indexOf(user) == (validPass.indexOf(SHA2.hash(sanit(pass), PASS_SALT)));
+		} else {
+			return false;
+		}
+	}
+	private static void refreshUserAndPass() {
 		validUsers.clear();
 		for (int i = 1; i < userList.size(); i++) {
 			validUsers.add(userList.get(i).split("\\|\\|\\|")[0].trim());
@@ -152,11 +171,6 @@ public class Access {
 		validPass.clear();
 		for (int i = 1; i < userList.size(); i++) {
 			validPass.add(userList.get(i).split("\\|\\|\\|")[1].trim());
-		}
-		if (validPass.contains(SHA2.hash(sanit(pass), PASS_SALT))) {
-			return validUsers.indexOf(user) == (validPass.indexOf(SHA2.hash(sanit(pass), PASS_SALT)));
-		} else {
-			return false;
 		}
 	}
 	private static String entCom() {
@@ -168,6 +182,13 @@ public class Access {
 	}
 	private static String sanit(String s) {
 		return s.replace("_", "")
+				.replace(".", "")
+				.replace("-", "")
+				.replace(" ", "").trim();
+	}
+	private static String sanit(User s) {
+		return s.toString()
+				.replace("_", "")
 				.replace(".", "")
 				.replace("-", "")
 				.replace(" ", "").trim();
