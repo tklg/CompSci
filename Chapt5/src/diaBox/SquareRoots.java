@@ -7,9 +7,9 @@ public class SquareRoots {
 		double num = 0;
 		int again;
 		do {
-			numStr = JOptionPane.showInputDialog("Enter an integer: ");
+			numStr = JOptionPane.showInputDialog("Enter an number: ");
 			try {
-				num = Math.abs(Integer.parseInt(numStr));
+				num = Math.abs(Double.parseDouble(numStr));
 				result = "The square root of " + num + " is " + Math.sqrt(num);
 			} catch (NumberFormatException e) {
 				System.err.println("Error: " + e);

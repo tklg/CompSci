@@ -141,8 +141,7 @@ public class Access {
 		}
 		return validUsers.contains(sanit(user));
 	}
-	private static boolean checkPass(String user, String pass) { //doesnt actually check to see if the password is from the user :P
-		//edit: it does now
+	private static boolean checkPass(String user, String pass) {
 		validUsers.clear();
 		for (int i = 1; i < userList.size(); i++) {
 			validUsers.add(userList.get(i).split("\\|\\|\\|")[0].trim());

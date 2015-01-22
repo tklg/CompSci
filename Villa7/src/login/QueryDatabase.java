@@ -18,14 +18,17 @@ import java.util.ArrayList;
 import functions.*;
 
 public class QueryDatabase {
-	//TODO: write a single function that receives a query string formatted for SQL or something
-	//Alternatively just use an actual SQL file maybe
+	//TODO: write a single function that receives an SQL-like query
 	
 	BufferedReader input;
     Writer output;
     Print p = new Print();
     File dir, dataFile, tempFile;
     static String divider = " ||| ";
+    ArrayList<String> row = new ArrayList<String>();
+    ArrayList<String> col = new ArrayList<String>();
+    ArrayList<String> fileContents = new ArrayList<String>();
+    //String row[];
     
 	public QueryDatabase(String dirName, String fileName, String tempFileName) {
 		dir = new File (this.getClass().getClassLoader().getResource("").getPath() + dirName);
@@ -37,7 +40,73 @@ public class QueryDatabase {
 	}
 	public void query(String query) {
 		String q[] = query.split(" ");
+		p.nl("Recieved query: \"" + query + "\"");
+		switch (q[0]) { //reads the first word of the query
+			case "SELECT": 
+				select(q);
+				break;
+			case "UPDATE": 
+				break;
+			case "CREATE": 
+				break;
+			case "INSERT": 
+				break;
+			default: 
+				p.ne("Recieved invalid query. (" + query + ")");
+				break;
+		}
 	}
+	//SELECT * FROM TABLE WHERE HEADER = 'VALUE'
+	//  0    1   2    3     4     5    6    7
+	/*
+	 * select - recieves a SELECT FROM query string as an array,
+	 * opens and reads the requested file (table) into an arraylist,
+	 * then selects everything in a row and makes an arraylist from those
+	 * then either returns a single value from column or returns the entire row
+	 */
+	public String[] select(String[] q) {
+		if (q[2].equals("FROM")) {
+			dataFile = new File(dir, q[3]);
+			fileContents = readFile();
+			if (q[4].equals("WHERE")) {
+				int i = 0;
+				for (String line : fileContents) {
+					row.add(line);
+					i++;
+				}
+				if (q[1].equals("*")) { //return everything
+					return row;
+				} else { //return a single value
+					String potato[] = {""};
+					String valToRet = row[Integer.parseInt(q[1])];
+					potato[0] = valToRet;
+					return potato;
+				}
+			}
+		}
+		return q;
+	}
+	public ArrayList<String> readFile() {
+    	String line;
+        ArrayList<String> result = new ArrayList<String>();
+    	try {
+            input = new BufferedReader(new FileReader(dataFile));
+            while ((line = input.readLine()) != null) {
+                result.add(line);
+            }
+            input.close();
+            return result;
+        }
+        catch (FileNotFoundException e) {
+            p.ne("File not found: " + e);
+            result.add("Error: FileNotFoundException " + e);
+            return result;
+        } catch (IOException e) {
+            p.ne("Can not read file: " + e);
+            result.add("Error: IOException " + e);
+            return result;
+        }
+    }
 	private int createDir(File dir) {
 		if (!dir.exists()) {
 			try {
@@ -77,148 +146,4 @@ public class QueryDatabase {
     	}
     	return 0; //0: file exists
     }
-    public ArrayList<String> readFile() {
-    	String line;
-        ArrayList<String> result = new ArrayList<String>();
-    	try {
-            input = new BufferedReader(new FileReader(dataFile));
-            while ((line = input.readLine()) != null) {
-                result.add(line);
-            }
-            input.close();
-            //p.nl("File \"" + dataFile.toString() + "\" read read and closed.");
-            return result;
-        }
-        catch (FileNotFoundException e) {
-            p.ne("File not found: " + e);
-            result.add("Error: FileNotFoundException " + e);
-            return result;
-        } catch (IOException e) {
-            p.ne("Can not read file: " + e);
-            result.add("Error: IOException " + e);
-            return result;
-        }
-    }
-    public boolean removeLineFromFile(String line) {
-    	if (checkFile(dataFile, true) == 0) {
-    		createFile(tempFile);
-    		if (checkFile(tempFile, true) == 0) {
-    			try {
-                    BufferedReader input;
-                    input = new BufferedReader(new FileReader(dataFile));
-
-                    String receiveString;
-                    BufferedWriter output;
-                    output = new BufferedWriter(new FileWriter(tempFile, true));
-                    while ((receiveString = input.readLine()) != null ) {
-                        if (!receiveString.equals(line)) {
-                            output.write(receiveString + "\n");
-                        }
-                    }
-                    output.close();
-                    input.close();
-	               /*Delete the original file*/
-	                try {
-	                    dataFile.delete();
-	                } catch (Exception e) {
-	                    p.ne("Could not delete file: " + e);
-	                }
-	                /*rename the new file to the filename the original file had.*/
-	                try {
-	                    tempFile.renameTo(dataFile);
-	                } catch (Exception e) {
-	                    p.ne("Could not rename file: " + e);
-	                }
-	                return true;
-	            } catch (FileNotFoundException e) {
-	                e.printStackTrace();
-	                p.ne("File not found: " + e);
-	            } catch (IOException e) {
-	            	p.ne("Can not read file: " + e);
-	                e.printStackTrace();
-	            }
-        	} else {
-        		p.ne("removeLineFromFile failed: tempFile does not exist and may have been created");
-        	}
-    	} else {
-    		p.ne("removeLineFromFile failed: file does not exist and may have been created");
-    	}
-    	return false;
-    }
-    public boolean removeLineFromFile(int line) {
-    	if (checkFile(dataFile, true) == 0) {
-    		createFile(tempFile);
-    		if (checkFile(tempFile, true) == 0) {
-    			try {
-                    BufferedReader input;
-                    input = new BufferedReader(new FileReader(dataFile));
-
-                    String receiveString;
-                    BufferedWriter output;
-                    output = new BufferedWriter(new FileWriter(tempFile, true));
-                    int i = 0;
-                    while ((receiveString = input.readLine()) != null ) {
-                        if (i != line) {
-                            output.write(receiveString + "\n");
-                        }
-                        i++;
-                    }
-                    output.close();
-                    input.close();
-	               /*Delete the original file*/
-	                try {
-	                    dataFile.delete();
-	                } catch (Exception e) {
-	                    p.ne("Could not delete file: " + e);
-	                }
-	                /*ename the new file to the filename the original file had.*/
-	                try {
-	                    tempFile.renameTo(dataFile);
-	                } catch (Exception e) {
-	                    p.ne("Could not rename file: " + e);
-	                }
-	                return true;
-	            } catch (FileNotFoundException e) {
-	                e.printStackTrace();
-	                p.ne("File not found: " + e);
-	            } catch (IOException e) {
-	            	p.ne("Can not read file: " + e);
-	                e.printStackTrace();
-	            }
-        	} else {
-        		p.ne("RemoveLineFromFile failed: tempFile does not exist and may have been created");
-        	}
-    	} else {
-    		p.ne("RemoveLineFromFile failed: file does not exist and may have been created");
-    	}
-    	return false;
-    }
-    public void writeFile(String lineToWrite, boolean newLine, boolean div) {
-    	if (checkFile(dataFile, true) == 0) {
-    		try {
-                output = new BufferedWriter(new FileWriter(dataFile, true));
-                if (newLine) {
-                	output.write("\n");
-                }
-                if (div) {
-                	output.write(divider);
-                }
-                output.write(lineToWrite);
-                output.close();
-                p.nl("\"" + lineToWrite + "\" added to " + dataFile);
-            }
-            catch (IOException e) {
-                p.ne("File write failed: " + e);
-            }
-    	} else {
-    		p.ne("writeFile failed: file does not exist and may have been created");
-    	}
-    }
-    /*private String addSpace(int num) {
-    	String ret = "";
-    	for (int i = 0; i < num; i++) {
-    		ret += " ";
-    	}
-    	return ret;
-    }*/
 }
