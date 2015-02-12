@@ -57,7 +57,8 @@ public class Access {
 				String remName = sanit(entCom());
 				p.nl("Enter that user's password:");
 				String remPass = sanit(entCom());
-				if (removeUser(remName, remPass)) {
+				int acLvl = 0;
+				if (removeUser(remName, remPass, acLvl)) {
 					p.nl("Removed user: " + remName);
 					userList = db.readFile(); //refresh user list
 				} else {
