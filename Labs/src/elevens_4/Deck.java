@@ -1,8 +1,7 @@
-package elevens;
+package elevens_4;
 
 import java.util.List;
 import java.util.ArrayList;
-import villa7.Print;
 
 /**
  * The Deck class represents a shuffled deck of cards.
@@ -10,11 +9,11 @@ import villa7.Print;
  *      initialize, shuffle, deal, and check if empty.
  */
 public class Deck {
-	private Print p = new Print();
+
 	/**
 	 * cards contains all the cards in the deck.
 	 */
-	private ArrayList<Card> deck;
+	private List<Card> cards;
 
 	/**
 	 * size is the number of not-yet-dealt cards.
@@ -33,15 +32,13 @@ public class Deck {
 	 * @param values is an array containing all of the card point values.
 	 */
 	public Deck(String[] ranks, String[] suits, int[] values) {
-		deck = new ArrayList<Card>();
-		p.nl("Creating deck:");
-		for (int i = 0; i < suits.length; i++) {
-			for (int c = 0; c < ranks.length; c++) {
-				deck.add(new Card(ranks[c], suits[i], values[c]));
-				p.nl("Adding card: " + ranks[c] + " of " + suits[i]);
+		cards = new ArrayList<Card>();
+		for (int j = 0; j < ranks.length; j++) {
+			for (String suitString : suits) {
+				cards.add(new Card(ranks[j], suitString, values[j]));
 			}
 		}
-		size = deck.size();
+		size = cards.size();
 		shuffle();
 	}
 
@@ -51,11 +48,7 @@ public class Deck {
 	 * @return true if this deck is empty, false otherwise.
 	 */
 	public boolean isEmpty() {
-		if (deck.size() == 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return size == 0;
 	}
 
 	/**
@@ -63,7 +56,7 @@ public class Deck {
 	 * @return the number of undealt cards in this deck.
 	 */
 	public int size() {
-		return deck.size();
+		return size;
 	}
 
 	/**
@@ -71,7 +64,13 @@ public class Deck {
 	 * and reset the size to represent the entire deck.
 	 */
 	public void shuffle() {
-		/* *** TO BE IMPLEMENTED IN ACTIVITY 4 *** */
+		for (int i = cards.size() - 1; i > 0; i--) {
+			int t = (int) Math.round(Math.random() * i);
+			Card tmp = cards.get(i);
+			cards.set(i, cards.get(t));
+			cards.set(t, tmp);
+		}
+		size = cards.size();
 	}
 
 	/**
@@ -80,11 +79,12 @@ public class Deck {
 	 *         previously dealt.
 	 */
 	public Card deal() {
-		Card temp = deck.get(size);
-		p.nl("Temp card: " + deck.get(size).toString());
+		if (isEmpty()) {
+			return null;
+		}
 		size--;
-		p.nl("removed card.");
-		return temp;
+		Card c = cards.get(size);
+		return c;
 	}
 
 	/**
@@ -93,27 +93,26 @@ public class Deck {
 	 */
 	@Override
 	public String toString() {
-		p.nl("Tostring");
 		String rtn = "size = " + size + "\nUndealt cards: \n";
 
-		for (int i = size - 1; i >= 0; i--) {
-			rtn = rtn + deck.get(i);
-			if (i != 0) {
+		for (int k = size - 1; k >= 0; k--) {
+			rtn = rtn + cards.get(k);
+			if (k != 0) {
 				rtn = rtn + ", ";
 			}
-			if ((size - i) % 2 == 0) {
+			if ((size - k) % 2 == 0) {
 				// Insert carriage returns so entire deck is visible on console.
 				rtn = rtn + "\n";
 			}
 		}
 
 		rtn = rtn + "\nDealt cards: \n";
-		for (int i = deck.size() - 1; i >= size; i--) {
-			rtn = rtn + deck.get(i);
-			if (i != size) {
+		for (int k = cards.size() - 1; k >= size; k--) {
+			rtn = rtn + cards.get(k);
+			if (k != size) {
 				rtn = rtn + ", ";
 			}
-			if ((i - deck.size()) % 2 == 0) {
+			if ((k - cards.size()) % 2 == 0) {
 				// Insert carriage returns so entire deck is visible on console.
 				rtn = rtn + "\n";
 			}

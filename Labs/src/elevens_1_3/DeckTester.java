@@ -1,4 +1,4 @@
-package elevens;
+package elevens_1_3;
 import villa7.Print;
 public class DeckTester {
 
@@ -22,10 +22,13 @@ public class DeckTester {
 			d[i] = new Deck(ranks, suits, pointVal);
 			p.nl("Size of deck " + i + ": " + d[i].size());
 			p.nl("Deck " + (i+1) + ": " + d[i].toString());
-			//d[i].deal();
-			//p.nl("Deck " + i + ": " + d[i].toString());
-			//p.nl("Deck " + i + " isEmpty: " + d[i].isEmpty());
+			d[i].deal();
+			p.nl("Deck " + (i+1) + ": " + d[i].toString());
+			p.nl("Deck " + (i+1) + " isEmpty: " + d[i].isEmpty());
+		}
+		
+		for (Deck deck : d) {
+			//foreach
 		}
 	}
-	
 }

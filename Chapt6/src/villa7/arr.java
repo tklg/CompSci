@@ -1,12 +1,7 @@
 package villa7;
 
-import java.util.*;
-
 public class arr {
 	
-	public arr() {
-		
-	}
 	public static String format(int[][] a) {
 		String ret = "";
 		for (int i = 0; i < a.length; i++) {
