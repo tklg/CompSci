@@ -26,11 +26,11 @@ public class ChatServer {
 			
 			output = ttp.processIn(msgIn); //get message from input
 			
-			p.nl(output); //print message 
+			msgOut(output); //print message 
 			
 			while ((input = kb.readString()) != null) { //continue doing that until ends
 				output = ttp.processIn(msgIn);
-				p.nl(output);
+				msgOut(output);
 				if (output.equalsIgnoreCase("logoff")) break; //logoff command ends loop
 			}
 			
