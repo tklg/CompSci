@@ -2,6 +2,17 @@ package elevens_1_3;
 
 public class Part3_Questions {
 	
+	public static void main(String[] args) {
+		int[] a = {1, 2,3, 4},
+			  b = {1, 2, 3, 4},
+			  c = {4, 2, 54, 1};
+		
+		boolean d = arePermutations(a, b);
+		boolean e = arePermutations(a, c);
+		
+		System.out.println(d + " .. " + e);
+	}
+	
 	public static String flip() {
 		int rnd = (int) Math.round(Math.random() * 2);
 		switch(rnd) {
@@ -42,7 +53,6 @@ public class Part3_Questions {
 				if (a[i] != b[i]) is = false;
 			}
 			return is;
-			
 		} else {
 			return false;
 		}
