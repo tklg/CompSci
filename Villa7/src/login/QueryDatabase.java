@@ -2,7 +2,7 @@
  * TextDatabase.java
  * Creates a text file that can be used as a very small database
  * (c) Theodore Kluge 2015 - http://kluge.ninja
- */
+ 
 package login;
 
 import java.io.BufferedReader;
@@ -58,12 +58,12 @@ public class QueryDatabase {
 	}
 	//SELECT * FROM TABLE WHERE HEADER = 'VALUE'
 	//  0    1   2    3     4     5    6    7
-	/*
+	
 	 * select - recieves a SELECT FROM query string as an array,
 	 * opens and reads the requested file (table) into an arraylist,
 	 * then selects everything in a row and makes an arraylist from those
 	 * then either returns a single value from column or returns the entire row
-	 */
+	 
 	public String[] select(String[] q) {
 		if (q[2].equals("FROM")) {
 			dataFile = new File(dir, q[3]);
@@ -147,3 +147,4 @@ public class QueryDatabase {
     	return 0; //0: file exists
     }
 }
+*/

@@ -1,4 +1,4 @@
-package login;
+/*package login;
 
 import java.net.URL;
 import org.json.*;
@@ -23,3 +23,4 @@ public class JSONDatabase {
 		}
 	}
 }
+*/

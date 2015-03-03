@@ -1,4 +1,4 @@
-package login;
+/*package login;
 
 import functions.*;
 import java.util.*;
@@ -194,3 +194,4 @@ public class UserAccess {
 				.replace(" ", "").trim();
 	}
 }
+*/
