@@ -19,8 +19,10 @@ public class TextTransferProtocol {
     	String out = "";
     	//scan for commands and stuff here
     	
-    	if (in.substring(0, 1) == "/") {
+    	if (in.startsWith("/")) {
     		String[] cmd = in.substring(1, in.length() - 1).trim().split(" ");
+    		p.nl("Recieved command: " + cmd);
+    		thread.runCmd(cmd);
     	} else {
     		out = in.trim();
     	}

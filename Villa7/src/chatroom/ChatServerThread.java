@@ -18,7 +18,7 @@ public class ChatServerThread extends Thread {
 	private Socket socket = null;
 	private ChatServer server = null;
 	private int id = -1;
-	private String name = null;
+	public String name = null;
 	private PrintWriter msgOut;
 	private BufferedReader msgIn;
 	
@@ -69,6 +69,31 @@ public class ChatServerThread extends Thread {
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	public boolean startVote(String type, int starter, int target) {
+		if (server.startVote(type, starter, target)) {
+			return true;
+		}
+		return false;
+	}
+	public boolean startVote(String type, int starter, String desc) {
+		if (server.startVote(type, starter, desc)) {
+			return true;
+		}
+		return false;
+	}
+	public void vote(int voter, int option) {
+		server.vote(voter, option);
+	}
+	public void runCmd(String[] cmd) {
+		String cmdName = cmd[0].toLowerCase().trim();
+		switch (cmdName) {
+		case "votekick":
+			int target = server.getClientID(cmd[1]); //get id of user name
+			String starter = name;
+			startVote("kick", server.getClientID(starter), target);
+			vote(server.getClientID(starter), 1); //voter also votes yes
 		}
 	}
 }

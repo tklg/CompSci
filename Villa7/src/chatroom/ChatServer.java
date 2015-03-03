@@ -27,16 +27,16 @@ public class ChatServer implements Runnable {
 			InetAddress inet = InetAddress.getLocalHost();
 			InetAddress[] ips = InetAddress.getAllByName(inet.getCanonicalHostName());
 			if (ips != null ) {
-			    for (int i = 0; i < 3; i++) {
+			    for (int i = 0; i < ips.length; i++) {
 			    	System.out.println(ips[i]);
 			    }
 			}
 			p.nl();
 			p.nl("On LAN, join the address starting with 192.168.*.*");
-			p.nl("Else use the first IP in the list.");
+			p.nl("If it doesn't exist, use the first IP in the list.");
 			p.nl();
 		} catch (UnknownHostException e) {
-
+			e.printStackTrace();
 		}
 		
 		boolean listening = true;
@@ -58,20 +58,61 @@ public class ChatServer implements Runnable {
 	public int getNextClientID() {
 		return numClients;
 	}
+	public int getClientID(String name) {
+		for (int i = 0; i < client.size(); i++) {
+			if (client.get(i).name.equalsIgnoreCase(name)) return i;
+		}
+		return -1;
+	}
 	
 	public void sendAll(String msg) {
-		for (ChatServerThread user : client) {
-			user.send(msg);
+		if (msg != null) {
+			for (ChatServerThread user : client) {
+				user.send(msg);
+			}
 		}
 	}
 	
-	public void sendOne(int id, String msg) {
-		client.get(id).send(msg);
+	public void sendOne(int starter, int target, String msg) {
+		if (msg != null) {
+			client.get(target).send(client.get(starter).name + " -> you:" + msg);
+		}
 	}
 	
-	private void kick(int id) {
-		sendOne(id, "Kicked from server");
-		client.get(id).leave();
+	private void kick(int starter, int target) {
+		sendOne(starter, target, "Kicked from server");
+		sendAll(client.get(starter).name + " has kicked " + client.get(target).name + " from the server");
+		client.get(target).leave();
+	}
+	private boolean voting = false;
+	private ChatVote vote;
+	public boolean startVote(String type, int starter, int target) {
+		if (!voting) {
+			vote = new ChatVote(starter, type, target);
+			sendAll(client.get(starter).name + " has voted to kick " + client.get(target).name);
+			voting = true;
+			return true;
+		}
+		return false;
+	}
+	public boolean startVote(String type, int starter, String desc) {
+		if (!voting) {
+			vote = new ChatVote(starter, type, desc);
+			sendAll(client.get(voter).name + " has voted " + ((option == 0) ? "no" : "yes"));
+			voting = true;
+			return true;
+		}
+		return false;
+	}
+	public void vote(int voter, int option) {
+		sendAll(client.get(voter).name + " has voted " + ((option == 0) ? "no" : "yes"));
+		vote.addVote(option);
+		if (vote.totalVotes() == client.size()) {
+			endVote();
+		}
+	}
+	private void endVote() {
+		voting = false;
 	}
 	
 	private static int findFreePort() {
