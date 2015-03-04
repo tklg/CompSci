@@ -11,6 +11,7 @@ public class ChatServer implements Runnable {
 	private static ArrayList<ChatServerThread> client = new ArrayList<ChatServerThread>();
 	private static int numClients = 0;
 	private static int port = 0;
+	private static final String CS = "§";
 	
 	public static void main(String[] args) {
 		new Thread(new ChatServer()).start();
@@ -46,7 +47,6 @@ public class ChatServer implements Runnable {
 	            client.add(new ChatServerThread(sSocket.accept(), this));
 	            client.get(numClients).start();
 	            numClients++;
-	            p.nl("Number of connected clients: " + numClients);
 	        }
 	    } catch (Exception e) {
             p.ne("Could not listen on port " + port);
@@ -64,32 +64,44 @@ public class ChatServer implements Runnable {
 		}
 		return -1;
 	}
+	public String getClientName(int id) {
+		return client.get(id).name;
+	}
 	
 	public void sendAll(String msg) {
 		if (msg != null) {
 			for (ChatServerThread user : client) {
 				user.send(msg);
 			}
+			p.nl(msg);
 		}
 	}
 	
-	public void sendOne(int starter, int target, String msg) {
+	public void sendOne(int starter, int target, String msg) { //used for pms
 		if (msg != null) {
-			client.get(target).send(client.get(starter).name + " -> you:" + msg);
+			client.get(target).send(CS + "d" + client.get(starter).name + " -> you: " + msg); //set color code to putple for all of these
 		}
+		p.nl(client.get(starter).name + " -> " + client.get(target).name + ": " + msg);
+	}
+	public void sendOne(int target, String msg) { //used for server -> user (command responses)
+		if (msg != null) {
+			client.get(target).send(msg);
+		}
+		p.nl("Server -> " + client.get(target).name + ": " + msg);
 	}
 	
 	private void kick(int starter, int target) {
-		sendOne(starter, target, "Kicked from server");
-		sendAll(client.get(starter).name + " has kicked " + client.get(target).name + " from the server");
+		sendOne(starter, target, CS + "4Kicked from server" + CS + "f");
+		sendAll(CS + "c" + client.get(starter).name + " has kicked " + client.get(target).name + " from the server" + CS + "f");
 		client.get(target).leave();
 	}
 	private boolean voting = false;
 	private ChatVote vote;
-	public boolean startVote(String type, int starter, int target) {
+	public boolean startVote(String type, int starter, int target, String desc) {
 		if (!voting) {
 			vote = new ChatVote(starter, type, target);
-			sendAll(client.get(starter).name + " has voted to kick " + client.get(target).name);
+			sendAll(CS + "c" + client.get(starter).name + " has voted to " + desc + client.get(target).name + CS + "f");
+			p.nl(client.get(starter).name + " has voted to " + desc + client.get(target).name);
 			voting = true;
 			return true;
 		}
@@ -98,14 +110,16 @@ public class ChatServer implements Runnable {
 	public boolean startVote(String type, int starter, String desc) {
 		if (!voting) {
 			vote = new ChatVote(starter, type, desc);
-			sendAll(client.get(voter).name + " has voted " + ((option == 0) ? "no" : "yes"));
+			sendAll(CS + "c" + client.get(starter).name + " has voted to " + desc + CS + "f");
+			p.nl(client.get(starter).name + " has voted to " + desc);
 			voting = true;
 			return true;
 		}
 		return false;
 	}
 	public void vote(int voter, int option) {
-		sendAll(client.get(voter).name + " has voted " + ((option == 0) ? "no" : "yes"));
+		sendAll(CS + "c" + client.get(voter).name + " has voted " + ((option == 0) ? "no" : "yes") + CS + "f");
+		p.nl(client.get(voter).name + " has voted " + ((option == 0) ? "no" : "yes"));
 		vote.addVote(option);
 		if (vote.totalVotes() == client.size()) {
 			endVote();

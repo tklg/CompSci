@@ -6,17 +6,27 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.LineBorder;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
+import javax.swing.text.Document;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
+
+import functions.p;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.StringReader;
 
 public class ChatClientGUI {
 	
-	private final int WIDTH_SETTINGS = 400,
+	private final int WIDTH_SETTINGS = 300,
 			  		  HEIGHT_SETTINGS = 200,
 			  		  WIDTH_MAIN = 900,
 			  		  HEIGHT_MAIN = 600;
@@ -30,7 +40,7 @@ public class ChatClientGUI {
 					   ipSet,
 					   portSet,
 					   input;
-	private JTextArea outputText;
+	private JEditorPane outputText;
 	private JScrollPane output,
 						userList;
 	private JLabel userTitle,
@@ -47,7 +57,7 @@ public class ChatClientGUI {
 
 	public ChatClientGUI(ChatClient client) {
 		this.client = client;
-		framePre = new JFrame("ChatServer v" + ver);
+		framePre = new JFrame("ChatClient v" + ver + " - Setup");
 		framePre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		framePre.setResizable(false);
 		
@@ -82,7 +92,7 @@ public class ChatClientGUI {
 		
 		/* --------------- Fancy stuff made with WindowBuilder -------------- */
 		
-		frame = new JFrame("ChatServer v" + ver + " " + getName());
+		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 		
@@ -90,33 +100,47 @@ public class ChatClientGUI {
 		panel.setPreferredSize(new Dimension(WIDTH_MAIN, HEIGHT_MAIN));
 		
 		input = new JTextField(30);
+		input.setFont(new Font("Arial", Font.PLAIN, 14));
 		
 		output = new JScrollPane();
 		output.setViewportBorder(new LineBorder(new Color(0, 0, 0)));
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addComponent(panel, GroupLayout.PREFERRED_SIZE, 434, GroupLayout.PREFERRED_SIZE)
+				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 704, Short.MAX_VALUE)
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addComponent(panel, GroupLayout.PREFERRED_SIZE, 262, GroupLayout.PREFERRED_SIZE)
+				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
 		);
 		
-		outputText = new JTextArea();
+		//outputText = new JTextArea();
+		outputText = new JEditorPane();
+		outputText.setFont(new Font("Arial", Font.PLAIN, 14));
 		output.setViewportView(outputText);
+		outputText.setEditable(false);
+		outputText.setContentType("text/html");
+		outputText.setBackground(new Color(20, 20, 20));
+		outputText.setForeground(Color.WHITE);
+		HTMLEditorKit kit = new HTMLEditorKit();
+		outputText.setEditorKit(kit);
+		//outputText.setLineWrap(true);
+		//outputText.setWrapStyleWord(true);
+		DefaultCaret caret = (DefaultCaret) outputText.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 				
 		btnSend = new JButton("Send");
 		btnSend.addActionListener(new SendListener());
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
-					.addComponent(input, GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
+			gl_panel.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panel.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(input, GroupLayout.DEFAULT_SIZE, 617, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(btnSend)
 					.addContainerGap())
-				.addComponent(output, GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+				.addComponent(output, GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
 		);
 		gl_panel.setVerticalGroup(
 			gl_panel.createParallelGroup(Alignment.TRAILING)
@@ -141,6 +165,7 @@ public class ChatClientGUI {
 	}
 	public void displayMain() {
 		frame.pack();
+		frame.setTitle("ChatClient v" + ver + " - " + username + "@" + ip + ":" + port);
 		framePre.setVisible(false);
 		frame.setVisible(true);
 	}
@@ -154,8 +179,29 @@ public class ChatClientGUI {
 		return (portSet.getText().length() > 0) ? Integer.parseInt(portSet.getText()) : 0;
 	}
 	public void pushToChat(String msg) {
-		outputText.append(msg + "\n");
+		append(msg + "\n");
 	}
+	public void append(String s) {
+		   try {
+		      HTMLDocument doc = (HTMLDocument) outputText.getDocument();
+		      //doc.insertString(doc.getLength(), s, null);
+		      HTMLEditorKit kit = (HTMLEditorKit) outputText.getEditorKit();
+		      /*try {
+					kit.insertHTML(doc, doc.getLength(), s, 0, 0, HTML.Tag.SPAN);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}*/
+		      StringReader reader = new StringReader(s);
+		      try {
+				kit.read(reader, doc, doc.getLength());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		   } catch (BadLocationException e) {
+		      e.printStackTrace();
+		   }
+		}
 	
 	private class SettingsListener implements ActionListener {
 		@Override
@@ -163,6 +209,9 @@ public class ChatClientGUI {
 			client.host = getIp();
 			client.port = getPort();
 			client.user = getName();
+			username = getName();
+			ip = getIp();
+			port = ""+getPort();
 			doneSettings = true;
 		}
 	}

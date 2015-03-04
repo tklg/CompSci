@@ -6,7 +6,7 @@ public class TextTransferProtocol {
 	
 	public String STATE = "waiting"; //idle, waiting, processing, sending, done -> idle
 	private static final String SPLITTER = "‡";
-	private static final String COLOR_SETTER = "§";
+	private static final String CS = "§"; //§§§§§§§§§§§
 	
 	private ChatServerThread thread;
 	
@@ -20,16 +20,16 @@ public class TextTransferProtocol {
     	//scan for commands and stuff here
     	
     	if (in.startsWith("/")) {
-    		String[] cmd = in.substring(1, in.length() - 1).trim().split(" ");
-    		p.nl("Recieved command: " + cmd);
+    		String[] cmd = in.substring(1, in.length()).trim().split(" ");
     		thread.runCmd(cmd);
+    		p.nl(thread.name + ": " + in);
     	} else {
     		out = in.trim();
     	}
     	
     	if (out.equalsIgnoreCase("logout")) {
     		thread.leave();
-    	} else {
+    	} else if (out != ""){
             return out;   		
     	}
     	return null;
