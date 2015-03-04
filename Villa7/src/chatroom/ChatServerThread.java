@@ -94,19 +94,39 @@ public class ChatServerThread extends Thread {
 		int target;
 		switch (cmdName) {
 		case "votekick":
-			if (cmd.length != 2) {
+			server.sendOne(server.getClientID(name), CS + "4/vote and /votekick are unimplemented.");
+			break;
+			/*if (cmd.length != 2) {
 				server.sendOne(server.getClientID(name), CS + "4votekick syntax: /votekick <user>");
 				break;
 			}
 			target = server.getClientID(cmd[1]); //get id of user name
 			String starter = name;
 			if (target == -1) {
-				server.sendOne(server.getClientID(name), CS + "4User '" + cmd[1] + "' is not online" + CS + "f");;
+				server.sendOne(server.getClientID(name), CS + "4User '" + cmd[1] + "' is not online");;
 			} else {
 				startVote("kick", server.getClientID(starter), target, "kick");
 				vote(server.getClientID(starter), 1); //voter also votes yes
 			}
+			break;*/
+		case "vote":
+			server.sendOne(server.getClientID(name), CS + "4/vote and /votekick are unimplemented.");
 			break;
+			/*if (cmd.length != 2) {
+				server.sendOne(server.getClientID(name), CS + "4vote syntax: /vote <yes | no>");
+				break;
+			}
+			int voter = server.getClientID(name);
+			if (cmd[1].equalsIgnoreCase("yes")) {
+				server.vote(voter, 1);
+			} else if (cmd[1].equalsIgnoreCase("no")) {
+				server.vote(voter, 0);
+			} else if (cmd[1].equalsIgnoreCase("end")) {
+				server.sendOne(server.getClientID(name), CS + "4Ending current vote and tallying results.");
+			} else {
+				server.sendOne(server.getClientID(name), CS + "4Please vote \"yes\" or \"no\"");
+			}
+			break;*/
 		case "me":
 		case "emote":
 			if (cmd.length <= 1) {
@@ -117,7 +137,7 @@ public class ChatServerThread extends Thread {
 			for (int i = 1; i < cmd.length; i++) {
 				msg += cmd[i] + " ";
 			}
-			server.sendAll("> " + CS + "2" + name + CS + "f " + msg);
+			server.sendAll(CS + "f> " + CS + "2" + name + CS + "f " + msg);
 			break;
 		case "msg":
 		case "message":
@@ -132,10 +152,11 @@ public class ChatServerThread extends Thread {
 			target = server.getClientID(cmd[1]);
 			lastUserPMd = target;
 			if (target == -1) {
-				server.sendOne(server.getClientID(name), CS + "4User '" + cmd[1] + "' is not online" + CS + "f");
+				server.sendOne(server.getClientID(name), CS + "4User '" + cmd[1] + "' is not online");
 			} else {
-				server.sendOne(server.getClientID(name), target, CS + "d" + msg);
-				server.sendOne(server.getClientID(name), CS + "dme -> " + cmd[1] + ": " + msg + CS + "f");
+				//server.sendOne(server.getClientID(name), target, CS + "d" + msg);
+				server.sendOne(target, CS + "d" + name + " -> you: " + msg);
+				server.sendOne(server.getClientID(name), CS + "dme -> " + cmd[1] + ": " + msg);
 			}
 			break;
 		case "r":
@@ -150,10 +171,11 @@ public class ChatServerThread extends Thread {
 			}
 			target = lastUserPMd;
 			if (target == -1) {
-				server.sendOne(server.getClientID(name), CS + "4User '" + server.getClientName(target) + "' is not online" + CS + "f");;
+				server.sendOne(server.getClientID(name), CS + "4User '" + server.getClientName(target) + "' is not online");;
 			} else {
-				server.sendOne(server.getClientID(name), target, CS + "4" + msg);
-				server.sendOne(server.getClientID(name), CS + "dme -> " + server.getClientName(target) + ": " + msg + CS + "f");
+				//server.sendOne(server.getClientID(name), target, CS + "d" + msg);
+				server.sendOne(target, CS + "d" + name + " -> you: " + msg);
+				server.sendOne(server.getClientID(name), CS + "dme -> " + server.getClientName(target) + ": " + msg);
 			}
 			break;
 		case "help":
@@ -162,7 +184,7 @@ public class ChatServerThread extends Thread {
 				server.sendOne(server.getClientID(name), CS + "4help syntax: /help");
 				break;
 			}
-			server.sendOne(server.getClientID(name), CS + "aAvailable commands: /votekick /me /emote /msg /message /r /reply /help /?");
+			server.sendOne(server.getClientID(name), CS + "aAvailable commands: /me /emote /msg /message /r /reply /help /?");
 			break;
 		case "who":
 		case "list":

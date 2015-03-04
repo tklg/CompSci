@@ -28,7 +28,9 @@ public class ChatClient implements Runnable {
 		g.displayMain();
 		
 		p.nl("Starting ChatClient");
+		g.pushToChat("Starting ChatClient");
 		p.nl("Connecting to " + host + " on port " + port);
+		g.pushToChat("Connecting to " + host + " on port " + port);
 		
 		try {
 			Socket sSocket = new Socket("localhost", port);
@@ -42,15 +44,11 @@ public class ChatClient implements Runnable {
 		try {
 			
 			String msgFrom;
-			/*p.nl("Set username: ");
-			String user = kb.readString();*/
 			
 			msgOut.println(user); //send the username as the client's first message to the server
 			
 			while ((msgFrom = msgIn.readLine()) != null) { //read response from server
-				
-				//p.nl(msgFrom); //push to chatbox
-				//g.pushToChat("<html>" + parseColor(msgFrom) + "</html>");
+
 				g.pushToChat(parseColor(msgFrom) + closeSpans());
 				
 			}	
@@ -71,6 +69,7 @@ public class ChatClient implements Runnable {
 	private static String sanitize(String msg) {
 		return msg.trim();
 	}
+	
 	private static String parseColor(String msg) { //this method uses bad/malformed HTML BUT IT WORKS I THINK
 		if (msg.contains(CS)) {
 			msg = msg.replaceAll(CS+"a", "<span style=\"color: #8afb17\">")

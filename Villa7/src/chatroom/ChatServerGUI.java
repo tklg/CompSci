@@ -24,7 +24,9 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.StringReader;
 
-public class ChatClientGUI {
+public class ChatServerGUI {
+	
+	private static final String CS = "§";
 	
 	private final int WIDTH_SETTINGS = 300,
 			  		  HEIGHT_SETTINGS = 200,
@@ -53,43 +55,11 @@ public class ChatClientGUI {
 	private String username, ip, port;
 	private boolean doneSettings = false,
 					doneMain = false;
-	private ChatClient client;
+	private ChatServer server;
 
-	public ChatClientGUI(ChatClient client) {
-		this.client = client;
-		framePre = new JFrame("ChatClient v" + ver + " - Setup");
-		framePre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		framePre.setResizable(false);
-		
-		panelPre = new JPanel();
-		panelPre.setPreferredSize(new Dimension(WIDTH_SETTINGS, HEIGHT_SETTINGS));
-		ipSet = new JTextField(30);
-		portSet = new JTextField(30);
-		
-		framePre.getContentPane().add(panelPre, BorderLayout.CENTER);
-		panelPre.setLayout(new GridLayout(8, 4, 0, 0));
-		userNameLabel = new JLabel("Set your username.");
-		userNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		panelPre.add(userNameLabel);
-		
-		userNameSet = new JTextField(30);
-		panelPre.add(userNameSet);
-		ipLabel = new JLabel("Server IP:");
-		ipLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		panelPre.add(ipLabel);
-		panelPre.add(ipSet);
-		portLabel = new JLabel("Server Port:");
-		portLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		panelPre.add(portLabel);
-		panelPre.add(portSet);
-		
-		horizontalBox = Box.createHorizontalBox();
-		panelPre.add(horizontalBox);
-		
-		btnConnect = new JButton("Connect");
-		btnConnect.addActionListener(new SettingsListener());
-		panelPre.add(btnConnect);
-		
+	public ChatServerGUI(ChatServer server) {
+		this.server = server;
+
 		/* --------------- Fancy stuff made with WindowBuilder -------------- */
 		
 		frame = new JFrame();
@@ -127,7 +97,7 @@ public class ChatClientGUI {
 		outputText.setEditorKit(kit);
 		Font font = new Font("Segoe UI", Font.PLAIN, 14);
 	    String stylesheet = "body { font-family: " + font.getFamily() + "; " +
-	            "font-size: " + font.getSize() + "pt; }";
+	            "font-size: " + font.getSize() + "pt; color: white;}";
 		((HTMLDocument) outputText.getDocument()).getStyleSheet().addRule(stylesheet);
 		//outputText.setLineWrap(true);
 		//outputText.setWrapStyleWord(true);
@@ -161,17 +131,9 @@ public class ChatClientGUI {
 		frame.getContentPane().setLayout(groupLayout);
 		
 	}
-	
-	public boolean displaySettings() {
-		framePre.pack();
-		frame.setVisible(false);
-		framePre.setVisible(true);
-		return doneSettings;
-	}
 	public void displayMain() {
 		frame.pack();
-		frame.setTitle("ChatClient v" + ver + " - " + username + "@" + ip + ":" + port);
-		framePre.setVisible(false);
+		frame.setTitle("ChatServer v" + ver);
 		frame.setVisible(true);
 	}
 	public String getName() {
@@ -204,23 +166,11 @@ public class ChatClientGUI {
 		   }
 		}
 	
-	private class SettingsListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			ChatClient.host = getIp();
-			ChatClient.port = getPort();
-			ChatClient.user = getName();
-			username = getName();
-			ip = getIp();
-			port = ""+getPort();
-			doneSettings = true;
-		}
-	}
 	private class SendListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (!input.getText().equals("")) {
-				client.send(input.getText()); //when send button pressed, send message in text box
+				server.sendAll(CS + "d[Server]" + CS + "f: " + input.getText()); //when send button pressed, send message in text box
 				input.setText(""); //clear box
 			}
 		}
