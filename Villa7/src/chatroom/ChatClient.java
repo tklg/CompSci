@@ -28,9 +28,7 @@ public class ChatClient implements Runnable {
 		g.displayMain();
 		
 		p.nl("Starting ChatClient");
-		g.pushToChat("Starting ChatClient");
 		p.nl("Connecting to " + host + " on port " + port);
-		g.pushToChat("Connecting to " + host + " on port " + port);
 		
 		try {
 			Socket sSocket = new Socket("localhost", port);
