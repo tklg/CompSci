@@ -119,7 +119,7 @@ public class ChatServerFunctions {
 				ChatServer.pushToChat(CS + "4help syntax: /help");
 				break;
 			}
-			ChatServer.pushToChat(CS + "aAvailable commands: /me /broadcast /emote /msg /message /r /reply /who /stop /kick /kickall /help /?");
+			ChatServer.pushToChat(CS + "aAvailable commands: /me /broadcast /bc /emote /msg /message /mute /r /reply /who /list /stop /kick /kickall /pex /help /?");
 			break;
 		case "who":
 		case "list":
@@ -127,14 +127,14 @@ public class ChatServerFunctions {
 				ChatServer.pushToChat(CS + "4user list syntax: /list");
 				break;
 			}
-			ChatServer.pushToChat(CS + "aUsers online: ");
+			ChatServer.pushToChat(CS + "aUsers online: " + ChatServer.getClientsOnline());
 			break;
 		case "stop":
 			if (cmd.length != 1) {
 				ChatServer.pushToChat(CS + "4server stop syntax: /stop");
 				break;
 			}
-			ChatServer.pushToChat(CS + "cStopping server...");
+			ChatServer.sendAll(CS + "cServer is shutting down...");
 			System.exit(0);
 			break;
 		case "kick":
@@ -143,7 +143,7 @@ public class ChatServerFunctions {
 				break;
 			}
 			if (ChatServer.getClientID(cmd[1]) == -1) {
-				ChatServer.pushToChat(CS + "4User '" + cmd[1] + "' is not online");;
+				ChatServer.pushToChat(CS + "4User '" + cmd[1] + "' is not online");
 			} else {
 				if (cmd.length == 2) {
 					ChatServer.kick(ChatServer.getClientID(cmd[1]));
@@ -164,6 +164,19 @@ public class ChatServerFunctions {
 			//ChatServer.kickAll();
 			ChatServer.pushToChat(CS + "4kickall command is unimplemented");
 			break;
+		case "mute": //mod
+			if (cmd.length < 2) {
+				ChatServer.pushToChat(CS + "4mute syntax: /mute &lt;user&gt;");
+				break;
+			}
+			if (ChatServer.getClientID(cmd[1]) == -1) {
+				ChatServer.pushToChat(CS + "4User '" + cmd[1] + "' is not online");
+				break;
+			}
+			ChatServer.mute(ChatServer.getClientID(cmd[1]));
+			ChatServer.sendOne(ChatServer.getClientID(cmd[1]), CS + "cYou have been " + ((ChatServer.getClient(cmd[1]).isMuted()) ? "muted" : "unmuted"));
+			ChatServer.pushToChat(CS + "c" + cmd[1] + " has been " + ((ChatServer.getClient(cmd[1]).isMuted()) ? "muted" : "unmuted"));
+			break;
 		case "broadcast":
 		case "bc":
 			if (cmd.length < 2) {
@@ -175,6 +188,67 @@ public class ChatServerFunctions {
 				msg += cmd[i] + " ";
 			}
 			ChatServer.sendAll(CS + "4[" + CS + "aBroadcast" + CS + "4]" + CS + "a" + CS + "l " + msg);
+			break;
+		case "pex":
+			if (cmd.length < 2 || cmd.length > 4) { // /pex promote user rank
+				ChatServer.pushToChat(CS + "4permissions syntax: /pex &lt;promote | demote&gt; &lt;user&gt; or /pex set &lt;user &lt;user | mod | admin&gt;&gt;");
+				break;
+			}
+			if (ChatServer.getClientID(cmd[2]) == -1) {
+				ChatServer.pushToChat(CS + "4User '" + cmd[2] + "' is not online");
+				break;
+			}
+			switch(cmd[1].toLowerCase().trim()) {
+			case "set":
+				if (cmd.length != 4) {
+					ChatServer.pushToChat(CS + "4permissions syntax: /pex set &lt;user &lt;user | mod | admin&gt;&gt;");
+				} else {
+					switch (cmd[3].toLowerCase().trim()) {
+						case "mod":
+						case "moderator":
+							ChatServer.promoteClient(ChatServer.getClientID(cmd[2]), 2);
+							ChatServer.sendOne(ChatServer.getClientID(cmd[2]), "You have been moved to moderator");
+							ChatServer.pushToChat(CS + "dChanged " + cmd[2] + " to moderator");
+							break;
+						case "admin":
+						case "administrator":
+							ChatServer.promoteClient(ChatServer.getClientID(cmd[2]), 3);
+							ChatServer.sendOne(ChatServer.getClientID(cmd[2]), "You have been moved to administrator");
+							ChatServer.pushToChat(CS + "dChanged " + cmd[2] + " to administrator");
+							break;
+						case "user":
+							ChatServer.promoteClient(ChatServer.getClientID(cmd[2]), 1);
+							ChatServer.sendOne(ChatServer.getClientID(cmd[2]), "You have been moved to user");
+							ChatServer.pushToChat(CS + "dChanged " + cmd[2] + " to user");
+							break;
+						default:
+							ChatServer.pushToChat(CS + "4permissions syntax: /pex set &lt;user &lt;user | mod | admin&gt;&gt;");
+							break;
+					}
+				}
+				break;
+			case "promote":
+				if (cmd.length != 3) {
+					ChatServer.pushToChat(CS + "4permissions syntax: /pex &lt;promote | demote&gt; &lt;user&gt;");
+				} else {
+					ChatServer.promoteClient(ChatServer.getClientID(cmd[2]));
+					ChatServer.sendOne(ChatServer.getClientID(cmd[2]), "You have been promoted");
+					ChatServer.pushToChat(CS + "dPromoted " + cmd[2]);
+				}
+				break;
+			case "demote":
+				if (cmd.length != 3) {
+					ChatServer.pushToChat(CS + "4permissions syntax: /pex &lt;promote | demote&gt; &lt;user&gt;");
+				} else {
+					ChatServer.demoteClient(ChatServer.getClientID(cmd[2]));
+					ChatServer.sendOne(ChatServer.getClientID(cmd[2]), "You have been demoted");
+					ChatServer.pushToChat(CS + "dDemoted " + cmd[2]);
+				}				
+				break;
+			default: 
+				ChatServer.pushToChat(CS + "4permissions syntax: /pex &lt;promote | demote&gt; &lt;user&gt; or /pex set &lt;user &lt;user | mod | admin&gt;&gt;");
+				break;
+			}
 			break;
 		default:
 			ChatServer.pushToChat(CS + "4The command you entered does not exist!");

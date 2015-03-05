@@ -28,37 +28,21 @@ public class ChatServerGUI {
 	
 	private static final String CS = "§";
 	
-	private final int WIDTH_SETTINGS = 300,
-			  		  HEIGHT_SETTINGS = 200,
-			  		  WIDTH_MAIN = 900,
+	private final int WIDTH_MAIN = 900,
 			  		  HEIGHT_MAIN = 600;
-	private final double ver = 1.1;
+	private final double ver = 1.2;
 	
-	private JFrame framePre,
-				   frame;
-	private JPanel panelPre,
-				   panel;
+	private JFrame frame;
+	private JPanel panel;
 	private JTextField userNameSet,
 					   ipSet,
 					   portSet,
 					   input;
 	private JEditorPane outputText;
-	private JScrollPane output,
-						userList;
-	private JLabel userTitle,
-				   userNameLabel,
-				   ipLabel,
-				   portLabel;
+	private JScrollPane output;
 	private JButton btnSend;
-	private JButton btnConnect;
-	private Box horizontalBox;
-	private String username, ip, port;
-	private boolean doneSettings = false,
-					doneMain = false;
-	private ChatServer server;
-
 	public ChatServerGUI(ChatServer server) {
-		this.server = server;
+		
 
 		/* --------------- Fancy stuff made with WindowBuilder -------------- */
 		

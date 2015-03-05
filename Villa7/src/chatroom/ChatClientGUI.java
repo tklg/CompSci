@@ -30,7 +30,7 @@ public class ChatClientGUI {
 			  		  HEIGHT_SETTINGS = 200,
 			  		  WIDTH_MAIN = 900,
 			  		  HEIGHT_MAIN = 600;
-	private final double ver = 1.1;
+	private final double ver = 1.2;
 	
 	private JFrame framePre,
 				   frame;
@@ -41,18 +41,16 @@ public class ChatClientGUI {
 					   portSet,
 					   input;
 	private JEditorPane outputText;
-	private JScrollPane output,
-						userList;
-	private JLabel userTitle,
-				   userNameLabel,
+	private JScrollPane output;
+	private JLabel userNameLabel,
 				   ipLabel,
-				   portLabel;
+				   portLabel,
+				   errorLabel;
 	private JButton btnSend;
 	private JButton btnConnect;
 	private Box horizontalBox;
 	private String username, ip, port;
-	private boolean doneSettings = false,
-					doneMain = false;
+	private boolean doneSettings = false;
 	private ChatClient client;
 
 	public ChatClientGUI(ChatClient client) {
@@ -86,8 +84,11 @@ public class ChatClientGUI {
 		panelPre.add(portLabel);
 		panelPre.add(portSet);
 		
-		horizontalBox = Box.createHorizontalBox();
-		panelPre.add(horizontalBox);
+		/*horizontalBox = Box.createHorizontalBox();
+		panelPre.add(horizontalBox);*/
+		errorLabel = new JLabel();
+		errorLabel.setForeground(new Color(255, 0, 0));
+		panelPre.add(errorLabel);
 		
 		btnConnect = new JButton("Connect");
 		btnConnect.addActionListener(new SettingsListener());
@@ -212,13 +213,22 @@ public class ChatClientGUI {
 	private class SettingsListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			ChatClient.host = getIp();
-			ChatClient.port = getPort();
-			ChatClient.user = getName();
-			username = getName();
-			ip = getIp();
-			port = ""+getPort();
-			doneSettings = true;
+			if (getName().length() < 1) {
+				errorLabel.setText("Set a username.");
+			} else if (getName().contains(" ")) {
+				errorLabel.setText("Username cannot contain spaces");
+			} else {
+				errorLabel.setText("");
+				if (!getIp().equals("")) ChatClient.host = getIp();
+				else ChatClient.host = "localhost";
+				if (!portSet.getText().equals("")) ChatClient.port = getPort();
+				else ChatClient.port = 25565;
+				ChatClient.user = getName();
+				username = ChatClient.user;
+				ip = ChatClient.host;
+				port = ""+ChatClient.port;
+				doneSettings = true;
+			}
 		}
 	}
 	private class SendListener implements ActionListener {

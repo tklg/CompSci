@@ -15,7 +15,7 @@ public class ChatClient implements Runnable {
 	public static String host, user;
 	public static int port;
 	private static int numCloseSpans = 0;
-	private boolean connected = false, waitingForReconnectConfirm = false;
+	private boolean connected = false, waitingForReconnectConfirm = false, running = true;
 		
 	public static void main(String[] args) {
 		new Thread(new ChatClient()).start();
@@ -23,7 +23,6 @@ public class ChatClient implements Runnable {
 	
 	public void run() {
 		g = new ChatClientGUI(this);
-		boolean running = true;
 		while (running) {
 			while (!connected) {
 				while(!g.displaySettings()) {
@@ -85,6 +84,8 @@ public class ChatClient implements Runnable {
 			if (waitingForReconnectConfirm && msgTo.equalsIgnoreCase("/retry")) {
 				connected = false;
 				waitingForReconnectConfirm = false;
+				/*running = false;
+				run();*/
 			} else {
 				msgOut.println(msgTo); //send input to server
 			}

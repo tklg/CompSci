@@ -21,9 +21,12 @@ public class TextTransferProtocol {
     	
     	if (in.startsWith("/")) {
     		String[] cmd = in.substring(1, in.length()).trim().split(" ");
+    		ChatServer.pushToChat(thread.name + ": " + in);
     		thread.runCmd(cmd);
     		p.nl(thread.name + ": " + in);
+    	} else if (thread.isMuted()) {
     		ChatServer.pushToChat(thread.name + ": " + in);
+    		ChatServer.sendOne(thread.getID(), CS+"cNo one can hear you.");
     	} else {
     		out = in.trim();
     	}
