@@ -12,21 +12,20 @@ public class ChatServer implements Runnable {
 	 * TODO:
 	 * Add server command parser including:
 	 	/pex <promote | demote> for temporary chat mods
-	 	/kick
-	 	/stop to stop the server
 	 */
 	
 	private static ArrayList<ChatServerThread> client = new ArrayList<ChatServerThread>();
 	private static int numClients = 0;
-	private static int port = 0;
+	public static int port = 0;
 	private static final String CS = "§";
-	private ChatServerGUI g;
+	private static ChatServerGUI g;
 	
 	public static void main(String[] args) {
 		new Thread(new ChatServer()).start();
 	}
 	public ChatServer() {
-		port = findFreePort();
+		//port = findFreePort();
+		port = 25565;
 	}
 	
 	public void run() {
@@ -43,6 +42,7 @@ public class ChatServer implements Runnable {
 			if (ips != null ) {
 			    for (int i = 0; i < ips.length; i++) {
 			    	System.out.println(ips[i]);
+			    	g.pushToChat("[INFO] \t" + ips[i]);
 			    }
 			}
 			p.nl();
@@ -61,11 +61,12 @@ public class ChatServer implements Runnable {
 			g.pushToChat("[INFO] Waiting for incoming connections");
             while (listening) {
 	            client.add(new ChatServerThread(sSocket.accept(), this));
-	            client.get(numClients).start();
+	            client.get(client.size() - 1).start();
 	            numClients++;
 	        }
 	    } catch (Exception e) {
             p.ne("Could not listen on port " + port);
+            g.pushToChat("[ERROR] Could not bind to port! Is another server already running on that port?");
             e.printStackTrace();
             //System.exit(-1);
         }
@@ -74,17 +75,20 @@ public class ChatServer implements Runnable {
 	public int getNextClientID() {
 		return numClients;
 	}
-	public int getClientID(String name) {
+	public void removeClient(int id) {
+		//client.remove(id);
+	}
+	public static int getClientID(String name) {
 		for (int i = 0; i < client.size(); i++) {
 			if (client.get(i).name.equalsIgnoreCase(name)) return i;
 		}
 		return -1;
 	}
-	public String getClientName(int id) {
+	public static String getClientName(int id) {
 		return client.get(id).name;
 	}
 	
-	public void sendAll(String msg) {
+	public static void sendAll(String msg) {
 		if (msg != null) {
 			for (ChatServerThread user : client) {
 				user.send(msg + CS + "f");
@@ -94,14 +98,14 @@ public class ChatServer implements Runnable {
 		}
 	}
 	
-	public void sendOne(int starter, int target, String msg) { //used for pms
+	public static void sendOne(int starter, int target, String msg) { //used for pms
 		if (msg != null) {
 			client.get(target).send(msg + CS + "f"); //set color code to putple for all of these
 		}
 		p.nl(client.get(starter).name + " -> " + client.get(target).name + ": " + msg);
 		g.pushToChat(ChatServerFunctions.parseColor(msg + CS + "f") + ChatServerFunctions.closeSpans());
 	}
-	public void sendOne(int target, String msg) { //used for server -> user (command responses)
+	public static void sendOne(int target, String msg) { //used for server -> user (command responses)
 		if (msg != null) {
 			client.get(target).send(msg + CS + "f");
 		}
@@ -109,10 +113,32 @@ public class ChatServer implements Runnable {
 		g.pushToChat("Server -> " + ChatServerFunctions.parseColor(msg + CS + "f") + ChatServerFunctions.closeSpans());
 	}
 	
-	private void kick(int starter, int target) {
+	public static void kick(int starter, int target) {
 		sendOne(starter, target, CS + "4Kicked from server");
+		sendOne(starter, target, "kick");
 		sendAll(CS + "c" + client.get(starter).name + " has kicked " + client.get(target).name + " from the server");
+		//g.pushToChat(ChatServerFunctions.parseColor(CS + "c" + client.get(starter).name + " has kicked " + client.get(target).name + " from the server") + ChatServerFunctions.closeSpans());
 		client.get(target).leave();
+	}
+	public static void kick(int target) {
+		sendOne(target, CS + "4Kicked from server");
+		sendOne(target, "kick");
+		sendAll(CS + "c" + client.get(target).name + " has been kicked from the server");
+		//g.pushToChat(ChatServerFunctions.parseColor(CS + "c" + client.get(target).name + " has been kicked from the server") + ChatServerFunctions.closeSpans());
+		client.get(target).leave();
+	}
+	public static void kick(int target, String reason) {
+		sendOne(target, CS + "4Kicked " + reason);
+		sendOne(target, "kick");
+		sendAll(CS + "c" + client.get(target).name + " has been kicked " + reason);
+		//g.pushToChat(ChatServerFunctions.parseColor(CS + "c" + client.get(target).name + " has been kicked " + reason) + ChatServerFunctions.closeSpans());
+		client.get(target).leave();
+	}
+	public static void kickAll() {
+		for (int i = 0; i < client.size(); i++) {
+			client.get(i).leave();
+			sendAll("kick");
+		}
 	}
 	private boolean voting = false;
 	private ChatVote vote;
@@ -146,6 +172,21 @@ public class ChatServer implements Runnable {
 	}
 	private void endVote() {
 		voting = false;
+	}
+	public static void pushToChat(String msg) {
+		g.pushToChat(ChatServerFunctions.parseColor(msg) + ChatServerFunctions.closeSpans());
+	}
+	public static void promoteClient(int id) {
+		
+	}
+	public static void promoteClient(int id, int alvl) {
+		
+	}
+	public static void demoteClient(int id) {
+		
+	}
+	public static void demoteClient(int id, int alvl) {
+		
 	}
 	
 	private static int findFreePort() {

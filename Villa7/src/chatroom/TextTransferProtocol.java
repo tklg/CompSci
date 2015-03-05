@@ -23,19 +23,14 @@ public class TextTransferProtocol {
     		String[] cmd = in.substring(1, in.length()).trim().split(" ");
     		thread.runCmd(cmd);
     		p.nl(thread.name + ": " + in);
+    		ChatServer.pushToChat(thread.name + ": " + in);
     	} else {
     		out = in.trim();
     	}
     	
-    	if (out.equalsIgnoreCase("logout")) {
-    		thread.leave();
-    	} else if (out != ""){
+    	if (out != ""){
             return out;   		
     	}
     	return null;
     }
-    
-	private static String sanitize(String msg) {
-		return msg.trim();
-	}
 }

@@ -18,6 +18,7 @@ public class ChatServerThread extends Thread {
 	private Socket socket = null;
 	private ChatServer server = null;
 	private int id = -1;
+	private int alvl = 1;
 	public String name = null;
 	private PrintWriter msgOut;
 	private BufferedReader msgIn;
@@ -58,6 +59,7 @@ public class ChatServerThread extends Thread {
 			} catch (Exception e) {
 				//e.printStackTrace();
 				p.nl("Lost connection to user: " + name);
+				ChatServer.pushToChat("[WARNING] Lost connection to user: " + name);
 			}
 	}
 	
@@ -67,6 +69,7 @@ public class ChatServerThread extends Thread {
 	public void leave() {
 		try {
 			server.sendAll(CS + "e" + name + " has left the server" + CS + "f");
+			server.removeClient(id);
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -88,6 +91,7 @@ public class ChatServerThread extends Thread {
 		server.vote(voter, option);
 	}
 	private int lastUserPMd = -1;
+	@SuppressWarnings("static-access")
 	public void runCmd(String[] cmd) {
 		String cmdName = cmd[0].toLowerCase().trim();
 		String msg;
@@ -130,7 +134,7 @@ public class ChatServerThread extends Thread {
 		case "me":
 		case "emote":
 			if (cmd.length <= 1) {
-				server.sendOne(server.getClientID(name), CS + "4me syntax: /me <message>");
+				server.sendOne(server.getClientID(name), CS + "4me syntax: /me &lt;message&gt;");
 				break;
 			}
 			msg = "";
@@ -142,7 +146,7 @@ public class ChatServerThread extends Thread {
 		case "msg":
 		case "message":
 			if (cmd.length < 3) {
-				server.sendOne(server.getClientID(name), CS + "4msg syntax: /msg <user> <message>");
+				server.sendOne(server.getClientID(name), CS + "4msg syntax: /msg &lt;user&gt; &lt;message&gt;");
 				break;
 			}
 			msg = "";
@@ -162,7 +166,11 @@ public class ChatServerThread extends Thread {
 		case "r":
 		case "reply":
 			if (cmd.length < 2) {
-				server.sendOne(server.getClientID(name), CS + "4reply syntax: /r <message>");
+				server.sendOne(server.getClientID(name), CS + "4reply syntax: /r &lt;message&gt;");
+				break;
+			}
+			if (lastUserPMd == -1) {
+				server.sendOne(server.getClientID(name), CS + "4You have not messaged anyone yet");
 				break;
 			}
 			msg = "";
@@ -184,7 +192,7 @@ public class ChatServerThread extends Thread {
 				server.sendOne(server.getClientID(name), CS + "4help syntax: /help");
 				break;
 			}
-			server.sendOne(server.getClientID(name), CS + "aAvailable commands: /me /emote /msg /message /r /reply /help /?");
+			server.sendOne(server.getClientID(name), CS + "aAvailable commands: /me /emote /logout /msg /message /r /reply /who /help /?");
 			break;
 		case "who":
 		case "list":
@@ -194,10 +202,21 @@ public class ChatServerThread extends Thread {
 			}
 			server.sendOne(server.getClientID(name), CS + "aUsers online: ");
 			break;
+		case "logout":
+		case "logoff":
+		case "dc":
+			leave();
+			break;
 		default:
 			server.sendOne(server.getClientID(name), CS + "4The command you entered does not exist!");
 			break;
 		}
+	}
+	public int getAlvl() {
+		return alvl;
+	}
+	public void setAlvl(int alvl) {
+		this.alvl = alvl;
 	}
 }
 

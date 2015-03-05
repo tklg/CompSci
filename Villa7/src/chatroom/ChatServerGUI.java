@@ -32,7 +32,7 @@ public class ChatServerGUI {
 			  		  HEIGHT_SETTINGS = 200,
 			  		  WIDTH_MAIN = 900,
 			  		  HEIGHT_MAIN = 600;
-	private final double ver = 1.0;
+	private final double ver = 1.1;
 	
 	private JFrame framePre,
 				   frame;
@@ -64,7 +64,7 @@ public class ChatServerGUI {
 		
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(false);
+		//frame.setResizable(false);
 		
 		panel = new JPanel();
 		panel.setPreferredSize(new Dimension(WIDTH_MAIN, HEIGHT_MAIN));
@@ -92,7 +92,9 @@ public class ChatServerGUI {
 		outputText.setEditable(false);
 		outputText.setContentType("text/html");
 		outputText.setBackground(new Color(20, 20, 20));
-		outputText.setForeground(Color.WHITE);
+		output.setAutoscrolls(true);
+		DefaultCaret caret = (DefaultCaret) outputText.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		HTMLEditorKit kit = new HTMLEditorKit();
 		outputText.setEditorKit(kit);
 		Font font = new Font("Segoe UI", Font.PLAIN, 14);
@@ -101,8 +103,6 @@ public class ChatServerGUI {
 		((HTMLDocument) outputText.getDocument()).getStyleSheet().addRule(stylesheet);
 		//outputText.setLineWrap(true);
 		//outputText.setWrapStyleWord(true);
-		DefaultCaret caret = (DefaultCaret) outputText.getCaret();
-		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 				
 		btnSend = new JButton("Send");
 		btnSend.addActionListener(new SendListener());
@@ -133,7 +133,7 @@ public class ChatServerGUI {
 	}
 	public void displayMain() {
 		frame.pack();
-		frame.setTitle("ChatServer v" + ver);
+		frame.setTitle("ChatServer v" + ver + " running on port " + ChatServer.port);
 		frame.setVisible(true);
 	}
 	public String getName() {
@@ -160,7 +160,7 @@ public class ChatServerGUI {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
+		      outputText.setCaretPosition(outputText.getDocument().getLength()); //3rd attempt
 		   } catch (BadLocationException e) {
 		      e.printStackTrace();
 		   }
@@ -170,8 +170,9 @@ public class ChatServerGUI {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (!input.getText().equals("")) {
-				server.sendAll(CS + "d[Server]" + CS + "f: " + input.getText()); //when send button pressed, send message in text box
-				input.setText(""); //clear box
+				String msg = ChatServerFunctions.parseIn(input.getText());
+				if (msg != null) ChatServer.sendAll(CS + "d[Server]" + CS + "f: " + msg); //when send button pressed, send message in text box
+				input.setText(null); //clear box
 			}
 		}
 	}

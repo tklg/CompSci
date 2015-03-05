@@ -30,7 +30,7 @@ public class ChatClientGUI {
 			  		  HEIGHT_SETTINGS = 200,
 			  		  WIDTH_MAIN = 900,
 			  		  HEIGHT_MAIN = 600;
-	private final double ver = 1.0;
+	private final double ver = 1.1;
 	
 	private JFrame framePre,
 				   frame;
@@ -64,7 +64,9 @@ public class ChatClientGUI {
 		panelPre = new JPanel();
 		panelPre.setPreferredSize(new Dimension(WIDTH_SETTINGS, HEIGHT_SETTINGS));
 		ipSet = new JTextField(30);
+		ipSet.addActionListener(new SettingsListener());
 		portSet = new JTextField(30);
+		portSet.addActionListener(new SettingsListener());
 		
 		framePre.getContentPane().add(panelPre, BorderLayout.CENTER);
 		panelPre.setLayout(new GridLayout(8, 4, 0, 0));
@@ -73,6 +75,7 @@ public class ChatClientGUI {
 		panelPre.add(userNameLabel);
 		
 		userNameSet = new JTextField(30);
+		userNameSet.addActionListener(new SettingsListener());
 		panelPre.add(userNameSet);
 		ipLabel = new JLabel("Server IP:");
 		ipLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -94,7 +97,7 @@ public class ChatClientGUI {
 		
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(false);
+		//frame.setResizable(false);
 		
 		panel = new JPanel();
 		panel.setPreferredSize(new Dimension(WIDTH_MAIN, HEIGHT_MAIN));
@@ -121,18 +124,19 @@ public class ChatClientGUI {
 		output.setViewportView(outputText);
 		outputText.setEditable(false);
 		outputText.setContentType("text/html");
-		outputText.setBackground(new Color(20, 20, 20));
-		outputText.setForeground(Color.WHITE);
+		outputText.setBackground(new Color(30, 30, 30));
+		output.setAutoscrolls(true);
+		DefaultCaret caret = (DefaultCaret) outputText.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		//outputText.setForeground(Color.WHITE);
 		HTMLEditorKit kit = new HTMLEditorKit();
 		outputText.setEditorKit(kit);
 		Font font = new Font("Segoe UI", Font.PLAIN, 14);
 	    String stylesheet = "body { font-family: " + font.getFamily() + "; " +
-	            "font-size: " + font.getSize() + "pt; }";
+	            "font-size: " + font.getSize() + "pt; color: white;}";
 		((HTMLDocument) outputText.getDocument()).getStyleSheet().addRule(stylesheet);
 		//outputText.setLineWrap(true);
 		//outputText.setWrapStyleWord(true);
-		DefaultCaret caret = (DefaultCaret) outputText.getCaret();
-		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 				
 		btnSend = new JButton("Send");
 		btnSend.addActionListener(new SendListener());
@@ -173,6 +177,7 @@ public class ChatClientGUI {
 		frame.setTitle("ChatClient v" + ver + " - " + username + "@" + ip + ":" + port);
 		framePre.setVisible(false);
 		frame.setVisible(true);
+		doneSettings = false;
 	}
 	public String getName() {
 		return (userNameSet.getText().length() > 0) ? userNameSet.getText() : "";
@@ -198,7 +203,7 @@ public class ChatClientGUI {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
+		      outputText.setCaretPosition(outputText.getDocument().getLength()); //3rd attempt to make it always always scroll
 		   } catch (BadLocationException e) {
 		      e.printStackTrace();
 		   }
