@@ -171,7 +171,7 @@ public class ChatServerThread extends Thread {
 				//server.sendOne(server.getClientID(name), target, CS + "d" + msg);
 				server.sendOne(target, CS + "d" + name + " -> you: " + msg);
 				server.sendOne(server.getClientID(name), CS + "dme -> " + cmd[1] + ": " + msg);
-				server.sendMods(name + " -> " + cmd[1] + ": " + msg);
+				server.sendMods(CS + "d" + name + " -> " + cmd[1] + ": " + msg);
 			}
 			break;
 		case "r":
@@ -195,7 +195,7 @@ public class ChatServerThread extends Thread {
 				//server.sendOne(server.getClientID(name), target, CS + "d" + msg);
 				server.sendOne(target, CS + "d" + name + " -> you: " + msg);
 				server.sendOne(server.getClientID(name), CS + "dme -> " + server.getClientName(target) + ": " + msg);
-				server.sendMods(name + " -> " + server.getClientName(target) + ": " + msg);
+				server.sendMods(CS + "d" + name + " -> " + server.getClientName(target) + ": " + msg);
 			}
 			break;
 		case "help":
