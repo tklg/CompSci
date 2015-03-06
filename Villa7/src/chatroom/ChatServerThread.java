@@ -60,6 +60,8 @@ public class ChatServerThread extends Thread {
 				
 			} catch (Exception e) {
 				//e.printStackTrace();
+				//leave();
+				server.removeClient(server.getClientID(name)); //figure out what to do if the client exits without doing /logout
 				p.nl("Lost connection to user: " + name);
 				ChatServer.pushToChat("[WARNING] Lost connection to user: " + name);
 			}
