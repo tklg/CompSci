@@ -55,11 +55,10 @@ public class ChatServerFunctions {
 		return ret;
 	}
 	public static void runCmd(String[] cmd) {
-		String cmdName = cmd[0].toLowerCase().trim();
 		String msg;
 		int target;
 		int lastUserPMd = -1;
-		switch (cmdName) {
+		switch (cmd[0].toLowerCase().trim()) {
 		case "me":
 		case "emote":
 			if (cmd.length <= 1) {
@@ -190,6 +189,7 @@ public class ChatServerFunctions {
 			ChatServer.sendAll(CS + "4[" + CS + "aBroadcast" + CS + "4]" + CS + "a" + CS + "l " + msg);
 			break;
 		case "pex":
+		case "rank":
 			if (cmd.length < 2 || cmd.length > 4) { // /pex promote user rank
 				ChatServer.pushToChat(CS + "4permissions syntax: /pex &lt;promote | demote&gt; &lt;user&gt; or /pex set &lt;user &lt;user | mod | admin&gt;&gt;");
 				break;
@@ -251,7 +251,7 @@ public class ChatServerFunctions {
 			}
 			break;
 		default:
-			ChatServer.pushToChat(CS + "4The command you entered does not exist!");
+			ChatServer.pushToChat(CS + "4Unknown command. Type /help for a list of commands.");
 			break;
 		}
 	}

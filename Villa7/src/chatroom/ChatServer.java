@@ -8,15 +8,14 @@ import functions.*;
 
 public class ChatServer implements Runnable {
 	
-	/*
-	 * TODO:
-	 * Add server command parser including:
-	 	/pex <promote | demote> for temporary chat mods
+	/*TODO:
+	 * Make it so that it saves 2 text files with admin/mod usernames
 	 */
 	
 	private static ArrayList<ChatServerThread> client = new ArrayList<ChatServerThread>();
 	private static ArrayList<String> admins = new ArrayList<String>();
 	private static ArrayList<String> mods = new ArrayList<String>();
+	public static ArrayList<String> users = new ArrayList<String>();
 	private static int numClients = 0;
 	public static int port = 0;
 	private static final String CS = "§";
@@ -27,7 +26,7 @@ public class ChatServer implements Runnable {
 	}
 	public ChatServer() {
 		try {
-			ServerSocket tSocket = new ServerSocket(25565); //default to 25565
+			ServerSocket tSocket = new ServerSocket(25565); //default to 25565 - will throw an exception if port is taken
 			tSocket.close();
 			port = 25565;
 		} catch (Exception e) {
@@ -91,6 +90,7 @@ public class ChatServer implements Runnable {
 		return numClients;
 	}
 	public void removeClient(int id) {
+		users.remove(users.indexOf(getClientName(id)));
 		client.set(id, null);
 		numClients--;
 	}
@@ -150,7 +150,7 @@ public class ChatServer implements Runnable {
 		if (msg != null) {
 			for (ChatServerThread user : client) {
 				if (user != null) {
-					if (user.getRank() > 2) user.send(msg + CS + "f");
+					if (user.getRank() >= 3) user.send(msg + CS + "f");
 				}
 			}
 		}
@@ -159,15 +159,15 @@ public class ChatServer implements Runnable {
 		if (msg != null) {
 			for (ChatServerThread user : client) {
 				if (user != null) {
-					if (user.getRank() > 3) user.send(msg + CS + "f");
+					if (user.getRank() >= 2) user.send(msg + CS + "f");
 				}
 			}
 		}
 	}
-	public static void sendOne(int starter, int target, String msg) { //used for pms
+	public static void sendOne(int starter, int target, String msg) { //used for pms, is currently unused
 		if (msg != null) {
 			client.get(target).send(msg + CS + "f");
-			sendMods(msg + CS + "f");
+			sendMods(client.get(starter).name + " -> " + client.get(target).name + ": " + msg);
 			p.nl(client.get(starter).name + " -> " + client.get(target).name + ": " + msg);
 			g.pushToChat(ChatServerFunctions.parseColor(msg + CS + "f") + ChatServerFunctions.closeSpans());
 		}

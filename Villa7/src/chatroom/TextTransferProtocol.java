@@ -4,7 +4,6 @@ import functions.*;
 
 public class TextTransferProtocol {
 	
-	public String STATE = "waiting"; //idle, waiting, processing, sending, done -> idle
 	private static final String SPLITTER = "‡";
 	private static final String CS = "§"; //§§§§§§§§§§§
 	

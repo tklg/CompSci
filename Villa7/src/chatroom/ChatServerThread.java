@@ -5,11 +5,6 @@ import java.net.*;
 
 import functions.*;
 
-/*
- * each client is assigned its own server thread
- * the thread hand;es input/output of everything
- */
-
 public class ChatServerThread extends Thread {
 	
 	private static final String SPLITTER = "‡"; //double dagger character
@@ -47,10 +42,15 @@ public class ChatServerThread extends Thread {
 				
 				if (name == null) {
 					name = msgIn.readLine();
+					if (ChatServer.users.contains(name)) {
+		            	ChatServer.pushToChat(CS+"cUser " + name + " already exists, changing to " + name + "_" + ChatServer.users.size() + 1);
+		            	name = name + "_" + ChatServer.users.size();
+		            }
 				}
+				ChatServer.users.add(name);
 				server.restoreClientRanks();
-				//output = ttp.processIn("login", msgIn.readLine()); //get message from input (this one is for the login alert)
-				server.sendAll(CS + "e" + name + " has joined the server" + CS + "f");
+				
+				server.sendAll(CS + "e" + name + " has joined the server");
 				
 				while ((input = msgIn.readLine()) != null) { //continue doing that until ends
 					output = ttp.processIn(input);
@@ -70,7 +70,7 @@ public class ChatServerThread extends Thread {
 	}
 	public void leave() {
 		try {
-			server.sendAll(CS + "e" + name + " has left the server" + CS + "f");
+			server.sendAll(CS + "e" + name + " has left the server");
 			server.sendOne(server.getClientID(name), "kick");
 			server.removeClient(server.getClientID(name));
 			socket.close();
@@ -103,10 +103,10 @@ public class ChatServerThread extends Thread {
 	private int lastUserPMd = -1;
 	@SuppressWarnings("static-access")
 	public void runCmd(String[] cmd) {
-		String cmdName = cmd[0].toLowerCase().trim();
+		//String cmdName = cmd[0].toLowerCase().trim();
 		String msg;
 		int target;
-		switch (cmdName) {
+		switch (cmd[0].toLowerCase().trim()) {
 		case "votekick":
 			server.sendOne(server.getClientID(name), CS + "4/vote and /votekick are unimplemented.");
 			break;
@@ -171,6 +171,7 @@ public class ChatServerThread extends Thread {
 				//server.sendOne(server.getClientID(name), target, CS + "d" + msg);
 				server.sendOne(target, CS + "d" + name + " -> you: " + msg);
 				server.sendOne(server.getClientID(name), CS + "dme -> " + cmd[1] + ": " + msg);
+				server.sendMods(name + " -> " + cmd[1] + ": " + msg);
 			}
 			break;
 		case "r":
@@ -194,6 +195,7 @@ public class ChatServerThread extends Thread {
 				//server.sendOne(server.getClientID(name), target, CS + "d" + msg);
 				server.sendOne(target, CS + "d" + name + " -> you: " + msg);
 				server.sendOne(server.getClientID(name), CS + "dme -> " + server.getClientName(target) + ": " + msg);
+				server.sendMods(name + " -> " + server.getClientName(target) + ": " + msg);
 			}
 			break;
 		case "help":
@@ -309,6 +311,7 @@ public class ChatServerThread extends Thread {
 			ChatServer.sendAll(CS + "4[" + CS + "aBroadcast" + CS + "4]" + CS + "a" + CS + "l " + msg);
 			break;
 		case "pex": //admin
+		case "rank":
 			if (getRank() < 3) {
 				server.sendOne(server.getClientID(name), CS + "cYou do not have permission to use this command");
 				break;
@@ -377,7 +380,7 @@ public class ChatServerThread extends Thread {
 			}
 			break;
 		default:
-			server.sendOne(server.getClientID(name), CS + "4The command you entered does not exist!");
+			server.sendOne(server.getClientID(name), CS + "4Unknown command. Type /help for a list of commands.");
 			break;
 		}
 	}
