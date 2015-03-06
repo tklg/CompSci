@@ -30,7 +30,7 @@ public class ChatServerGUI {
 	
 	private final int WIDTH_MAIN = 900,
 			  		  HEIGHT_MAIN = 600;
-	private final double ver = 1.2;
+	private final double ver = 1.3;
 	
 	private JFrame frame;
 	private JPanel panel;
